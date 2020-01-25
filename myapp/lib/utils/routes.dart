@@ -6,6 +6,6 @@ class AllRoutes {
   static var route = {
     '/': (context) => HomePage(),
     '/recorder': (context) => RecorderPage(),
-    '/settinges': (context) => SettingsPage(),
+    '/settings': (context) => SettingsPage(),
   };
 }

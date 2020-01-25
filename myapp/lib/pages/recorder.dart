@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/common/customAppBar.dart';
+import 'package:myapp/common/customDrawer.dart';
 
 class RecorderPage extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Recorder Page'),
-      ),
+      appBar: CustomAppBar(titleAppBar:'Recorder Page'),
+      drawer: CustomDrawer(),
     );
   }
 }
