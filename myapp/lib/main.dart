@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:myapp/utils/routes.dart';
-// import 'package:myapp/utils/cache.dart';
+import 'package:myapp/utils/cache.dart';
 
 void main() => runApp(MyApp());
 
@@ -14,15 +14,20 @@ class _MyAppState extends State<MyApp> {
   Brightness _cacheBrigthness;
   var _cacheColor;
 
-  // @override
-  // void initState() {
-    // Cache.getColor().then((data) {
-    //   setState(() {
-    //     _cacheColor = data;
-    //   });
-    // });
-    // super.initState();
-  // }
+  @override
+  void initState() {
+    Cache.getDarkMode().then((state) {
+      setState(() {
+        _cacheBrigthness = (state) ? Brightness.dark : Brightness.light;
+      });
+    });
+    Cache.getColor().then((data) {
+      setState(() {
+        _cacheColor = (data != 0) ? Color(data) : Colors.blue;
+      });
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
