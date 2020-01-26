@@ -45,7 +45,7 @@ class Cache {
     await _checkJSONExist();
     if ((fileExists)) {
       var jsonContent = await jsonDecode(jsonFile.readAsStringSync());
-      return jsonContent['darkModeState'];
+      return jsonContent['darkModeState'] ?? false;
     } else {
       return false;
     }

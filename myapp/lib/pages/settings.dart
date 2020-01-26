@@ -11,9 +11,9 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  bool darkModeState;
-  ColorSwatch _tempMainColor;
-  ColorSwatch _mainColor = Colors.blue;
+  bool darkModeState = false;
+  var _tempMainColor;
+  var _mainColor;
 
   @override
   void initState() {
@@ -35,13 +35,25 @@ class _SettingsPageState extends State<SettingsPage> {
           actions: [
             FlatButton(
               child: Text('CANCEL'),
-              onPressed: Navigator.of(context).pop,
+              onPressed: () {
+                Navigator.of(context).pop();
+                DynamicTheme.of(context).setThemeData(new ThemeData(
+                  primaryColor: _tempMainColor,
+                  brightness: Theme.of(context).brightness,
+                ));
+                setState(() => _mainColor = _tempMainColor);
+              }
             ),
             FlatButton(
               child: Text('SUBMIT'),
               onPressed: () {
+                Cache.setColor(_mainColor.value);
+                DynamicTheme.of(context).setThemeData(new ThemeData(
+                  primaryColor: _mainColor,
+                  brightness: Theme.of(context).brightness,
+                ));
                 Navigator.of(context).pop();
-                setState(() => _mainColor = _tempMainColor);
+                setState(() => _tempMainColor = _mainColor);
               }
             ),
           ],
@@ -51,19 +63,19 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   void _openColorPicker() async {
+    setState(() => _tempMainColor = Theme.of(context).primaryColor);
     _openDialog(
       "Choose color",
       MaterialColorPicker(
         allowShades: false,
         colors: fullMaterialColors,
-        selectedColor: _mainColor,
+        selectedColor: Theme.of(context).primaryColor,
         onMainColorChange: (color) => setState(() {
+          _mainColor = color;
           DynamicTheme.of(context).setThemeData(new ThemeData(
-            primaryColor: color,
+            primaryColor: _mainColor,
             brightness: Theme.of(context).brightness,
           ));
-          Cache.setColor(color.value);
-          return _tempMainColor = color;
         }),
       ),
     );
