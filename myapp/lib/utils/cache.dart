@@ -65,4 +65,20 @@ class Cache {
     await _checkJSONExist();
     _setJSON('themeColor', color);
   }
+
+  static saveRecord(name, path) async {
+    Map<String, dynamic> record = {'name': name, 'path': path};
+    List content = [];
+    await _checkJSONExist();
+    if ((fileExists)) {
+      var jsonContent = await jsonDecode(jsonFile.readAsStringSync());
+
+      content = jsonContent['records'] ?? [];
+      int index = content.indexWhere((elem) => elem.toString() == record.toString());
+
+      if (index != -1) content.removeAt(index);
+    }
+    content.add(record);
+    _setJSON('records', content);
+  }
 }
