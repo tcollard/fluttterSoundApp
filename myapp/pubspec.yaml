@@ -20,6 +20,9 @@ dependencies:
   dynamic_theme: ^1.0.1
   path_provider: ^1.5.1
   flutter_material_color_picker: ^1.0.5
+  audio_recorder: ^1.0.1
+  audioplayers: ^0.14.0
+  permission_handler: ^4.2.0+hotfix.2
   flutter:
     sdk: flutter
 
