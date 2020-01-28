@@ -17,7 +17,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   void initState() {
-    Cache.getDarkMode().then((state) {
+    Cache().getDarkMode().then((state) {
       setState(() {
         darkModeState = state;
       });
@@ -47,7 +47,7 @@ class _SettingsPageState extends State<SettingsPage> {
             FlatButton(
               child: Text('SUBMIT'),
               onPressed: () {
-                Cache.setColor(_mainColor.value);
+                Cache().setColor(_mainColor.value);
                 DynamicTheme.of(context).setThemeData(new ThemeData(
                   primaryColor: _mainColor,
                   brightness: Theme.of(context).brightness,
@@ -96,7 +96,7 @@ class _SettingsPageState extends State<SettingsPage> {
               onChanged: (value) {
                 setState(() {
                   darkModeState = value;
-                  Cache.setDarkMode(value);
+                  Cache().setDarkMode(value);
                   DynamicTheme.of(context).setBrightness(
                       darkModeState ? Brightness.dark : Brightness.light);
                   DynamicTheme.of(context).setThemeData(ThemeData(

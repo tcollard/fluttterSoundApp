@@ -16,12 +16,12 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-    Cache.getDarkMode().then((state) {
+    Cache().getDarkMode().then((state) {
       setState(() {
         _cacheBrigthness = (state) ? Brightness.dark : Brightness.light;
       });
     });
-    Cache.getColor().then((data) {
+    Cache().getColor().then((data) {
       setState(() {
         _cacheColor = (data != 0) ? Color(data) : Colors.blue;
       });

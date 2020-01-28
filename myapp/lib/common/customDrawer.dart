@@ -21,9 +21,9 @@ class CustomDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              title: Text('Recorder'),
+              title: Text('Sound Library'),
               onTap: () {
-                Navigator.pushNamed(context, '/recorder');
+                Navigator.pushNamed(context, '/soundLib');
               },
             ),
             ListTile(

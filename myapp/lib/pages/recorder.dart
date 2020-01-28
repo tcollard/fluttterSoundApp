@@ -175,7 +175,7 @@ class _RecorderPageState extends State<RecorderPage> {
 
   // SAVE / DELETE RECORDING
   _saveRecord() {
-    Cache.saveRecord(_recordPath, _recordPath);
+    Cache().saveRecord(_recordPath, _recordPath);
     setState(() {
       _recordPath = null;
     });
