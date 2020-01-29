@@ -8,9 +8,8 @@ class Cache {
   String fileName;
   bool fileExists;
 
-
   static final Cache _cache = Cache._internal();
- 
+
   factory Cache() {
     return _cache;
   }
@@ -19,8 +18,6 @@ class Cache {
     fileName = "cache.json";
     fileExists = false;
   }
- 
- 
 
   checkJSONExist() async {
     Directory directory = await getApplicationDocumentsDirectory();
@@ -86,7 +83,8 @@ class Cache {
     if (this.fileExists) {
       var jsonContent = await jsonDecode(this.jsonFile.readAsStringSync());
       content = jsonContent['records'] ?? [];
-      int index = content.indexWhere((elem) => elem.toString() == record.toString());
+      int index =
+          content.indexWhere((elem) => elem.toString() == record.toString());
 
       if (index != -1) content.removeAt(index);
       updateRecordsIndex(content);
@@ -115,5 +113,24 @@ class Cache {
         allRecords[i]["index"] = i;
       }
     }
+  }
+
+  updateRecord(key, value, elem) async {
+    List content = [];
+    var jsonContent = await jsonDecode(this.jsonFile.readAsStringSync());
+    content = jsonContent['records'];
+    content[elem['index']][key] = value;
+    print('CONTENT: $content');
+    print('JSON-CONTENT: $jsonContent');
+    this.jsonFile.writeAsStringSync(jsonEncode(jsonContent));
+  }
+
+  removeRecord(elem) async {
+    List content = [];
+    var jsonContent = await jsonDecode(this.jsonFile.readAsStringSync());
+    content = jsonContent['records'];
+    int i = content.indexWhere((record) => record.toString() == elem.toString());
+    content.removeAt(i);
+    this.jsonFile.writeAsStringSync(jsonEncode(jsonContent));
   }
 }
