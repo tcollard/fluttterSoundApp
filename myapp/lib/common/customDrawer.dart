@@ -17,19 +17,31 @@ class CustomDrawer extends StatelessWidget {
             ListTile(
               title: Text('Home'),
               onTap: () {
-                Navigator.pushNamed(context, '/');
+                if (ModalRoute.of(context).settings.name != '/') {
+                  Navigator.popUntil(context, ModalRoute.withName('/'));
+                } else {
+                  Navigator.pop(context);
+                }
               },
             ),
             ListTile(
               title: Text('Sound Library'),
               onTap: () {
-                Navigator.pushNamed(context, '/soundLib');
+                if (ModalRoute.of(context).settings.name != '/soundLib') {
+                  Navigator.pushNamed(context, '/soundLib');
+                } else {
+                  Navigator.pop(context);
+                }
               },
             ),
             ListTile(
               title: Text('Settings'),
               onTap: () {
-                Navigator.pushNamed(context, '/settings');
+                if (ModalRoute.of(context).settings.name != '/settings') {
+                  Navigator.pushNamed(context, '/settings');
+                } else {
+                  Navigator.pop(context);
+                }
               },
             ),
           ],
