@@ -80,8 +80,8 @@ class Cache {
   }
 
   saveRecord(name, path) async {
-    Map<String, dynamic> record = {'name': name, 'path': path};
     List content = [];
+    Map<String, dynamic> record;
     await this.checkJSONExist();
     if (this.fileExists) {
       var jsonContent = await jsonDecode(this.jsonFile.readAsStringSync());
@@ -89,13 +89,15 @@ class Cache {
       int index = content.indexWhere((elem) => elem.toString() == record.toString());
 
       if (index != -1) content.removeAt(index);
+      updateRecordsIndex(content);
+      print('Contern: $content');
     }
+    record = {'name': name, 'path': path, 'index': content.length};
     content.add(record);
     this.setJSON('records', content);
   }
 
   getRecord() async {
-    // List listRecords = [];
     await this.checkJSONExist();
     if (this.fileExists) {
       var jsonContent = await jsonDecode(this.jsonFile.readAsStringSync());
@@ -103,6 +105,15 @@ class Cache {
       return jsonContent['records'];
     } else {
       return null;
+    }
+  }
+
+  updateRecordsIndex(allRecords) {
+    //Update to keep position from list drag & drop
+    for (var i = 0; i < allRecords.length; i++) {
+      if (allRecords[i]["index"] != i) {
+        allRecords[i]["index"] = i;
+      }
     }
   }
 }
