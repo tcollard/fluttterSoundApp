@@ -50,8 +50,19 @@ class _MyAppState extends State<MyApp> {
             child: Scaffold(
               appBar: AppBar(
                 title: Text('My App'),
+                backgroundColor: theme.primaryColor,
+                elevation: 0,
                 bottom: TabBar(
-                  isScrollable: true,
+                  isScrollable: false,
+                  labelColor: theme.primaryColor,
+                  unselectedLabelColor: theme.scaffoldBackgroundColor,
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  indicator: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        topRight: Radius.circular(10)),
+                    color: theme.scaffoldBackgroundColor,
+                  ),
                   tabs: _listPages.map((page) {
                     return Tab(text: page.title, icon: Icon(page.icon));
                   }).toList(),

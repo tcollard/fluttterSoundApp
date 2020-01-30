@@ -29,5 +29,3 @@ class AllPages {
     ];
   }
 }
-
-const Toto = 'tata';
