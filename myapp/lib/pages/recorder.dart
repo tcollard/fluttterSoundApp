@@ -1,7 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:myapp/common/customAppBar.dart';
-import 'package:myapp/common/customDrawer.dart';
 import 'package:myapp/utils/cache.dart';
 import 'package:audio_recorder/audio_recorder.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -89,14 +87,10 @@ class _RecorderPageState extends State<RecorderPage> {
             _deleteRecord();
           }));
     }
-    return Scaffold(
-      appBar: CustomAppBar(titleAppBar: 'Recorder Page'),
-      drawer: CustomDrawer(),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: buttons,
-        ),
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: buttons,
       ),
     );
   }

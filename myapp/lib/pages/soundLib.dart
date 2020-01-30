@@ -1,7 +1,5 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:myapp/common/customAppBar.dart';
-import 'package:myapp/common/customDrawer.dart';
 import 'package:myapp/utils/cache.dart';
 
 class SoundLib extends StatefulWidget {
@@ -31,11 +29,7 @@ class _SoundLibState extends State<SoundLib> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(titleAppBar: 'Library'),
-      drawer: CustomDrawer(),
-      body: initBody(),
-    );
+    return initBody();
   }
 
   initSoundList() async {

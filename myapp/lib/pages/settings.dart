@@ -1,7 +1,5 @@
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:myapp/common/customAppBar.dart';
-import 'package:myapp/common/customDrawer.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:myapp/utils/cache.dart';
 
@@ -84,35 +82,31 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(titleAppBar: 'Settings Page'),
-      drawer: CustomDrawer(),
-      body: Center(
-        child: Column(
-          children: <Widget>[
-            Text('Dark mode'),
-            Switch(
-              value: darkModeState,
-              onChanged: (value) {
-                setState(() {
-                  darkModeState = value;
-                  Cache().setCache('darkModeState', value);
-                  DynamicTheme.of(context).setBrightness(
-                      darkModeState ? Brightness.dark : Brightness.light);
-                  DynamicTheme.of(context).setThemeData(ThemeData(
-                    primaryColor: Theme.of(context).primaryColor,
-                    brightness:
-                        (darkModeState) ? Brightness.dark : Brightness.light,
-                  ));
-                });
-              },
-            ),
-            RaisedButton(
-              child: Text('Change color'),
-              onPressed: _openColorPicker,
-            ),
-          ],
-        ),
+    return Center(
+      child: Column(
+        children: <Widget>[
+          Text('Dark mode'),
+          Switch(
+            value: darkModeState,
+            onChanged: (value) {
+              setState(() {
+                darkModeState = value;
+                Cache().setCache('darkModeState', value);
+                DynamicTheme.of(context).setBrightness(
+                    darkModeState ? Brightness.dark : Brightness.light);
+                DynamicTheme.of(context).setThemeData(ThemeData(
+                  primaryColor: Theme.of(context).primaryColor,
+                  brightness:
+                      (darkModeState) ? Brightness.dark : Brightness.light,
+                ));
+              });
+            },
+          ),
+          RaisedButton(
+            child: Text('Change color'),
+            onPressed: _openColorPicker,
+          ),
+        ],
       ),
     );
   }
