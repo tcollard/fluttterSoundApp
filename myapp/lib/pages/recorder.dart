@@ -137,9 +137,8 @@ class _RecorderPageState extends State<RecorderPage> {
     try {
       if (await AudioRecorder.hasPermissions) {
         await AudioRecorder.start();
-        bool isRecording = await AudioRecorder.isRecording;
+        await AudioRecorder.isRecording;
         setState(() {
-          // final Recording _recording = Recording(duration: Duration(), path: "");
           _isRecording = true;
         });
       } else {}
@@ -153,9 +152,8 @@ class _RecorderPageState extends State<RecorderPage> {
   _stopRecord() async {
     try {
       var recording = await AudioRecorder.stop();
-      bool isRecording = await AudioRecorder.isRecording;
+      await AudioRecorder.isRecording;
       setState(() {
-        // _recording = recording;
         _isRecording = false;
         _recordPath = recording.path;
       });

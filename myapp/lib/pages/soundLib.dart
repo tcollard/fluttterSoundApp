@@ -15,6 +15,7 @@ class _SoundLibState extends State<SoundLib> {
   List<dynamic> listSound = [];
   bool isPlaying = false;
   String soundPlay;
+  Widget body;
 
   @override
   void initState() {
@@ -33,7 +34,21 @@ class _SoundLibState extends State<SoundLib> {
     return Scaffold(
       appBar: CustomAppBar(titleAppBar: 'Library'),
       drawer: CustomDrawer(),
-      body: ReorderableListView(
+      body: initBody(),
+    );
+  }
+
+  initSoundList() async {
+    var recordsJson = await Cache().getCacheOnKey('records');
+    setState(() {
+      listSound = recordsJson;
+      initBody();
+    });
+  }
+
+  initBody() {
+    if (listSound != null && listSound.length > 0) {
+      return ReorderableListView(
         children: listSound
             .map((index) => ListTile(
                 leading: Icon(Icons.music_note),
@@ -42,6 +57,12 @@ class _SoundLibState extends State<SoundLib> {
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
+                    // IconButton(
+                    //   icon: Icon(Icons.print),
+                    //   onPressed: () {
+                    //     print('List: $listSound');
+                    //   },
+                    // ),
                     IconButton(
                       icon: isPlaying && soundPlay == index['path']
                           ? Icon(Icons.stop)
@@ -59,7 +80,6 @@ class _SoundLibState extends State<SoundLib> {
                     IconButton(
                       icon: Icon(Icons.mode_edit),
                       onPressed: () {
-                        print('Edit');
                         showDialog(
                           context: context,
                           child: Dialog(
@@ -76,8 +96,6 @@ class _SoundLibState extends State<SoundLib> {
                                     FlatButton(
                                         child: Text('OK'),
                                         onPressed: () {
-                                          print(
-                                              'validation: ${inputNameController.text}');
                                           setState(() {
                                             Cache().updateRecord(
                                                 'name',
@@ -92,9 +110,7 @@ class _SoundLibState extends State<SoundLib> {
                                     FlatButton(
                                         child: Text('Cancel'),
                                         onPressed: () {
-                                          print('Annulation');
                                           Navigator.of(context).pop();
-                                          // Navigator.of(context).pop();
                                         }),
                                   ],
                                 ),
@@ -116,21 +132,16 @@ class _SoundLibState extends State<SoundLib> {
                 )))
             .toList(),
         onReorder: updateIndex,
-      ),
+      );
+    }
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[Text('No sound for the momment')],
     );
-  }
-
-  initSoundList() async {
-    var recordsJson = await Cache().getRecord();
-    setState(() {
-      listSound = recordsJson;
-    });
   }
 
   updateIndex(int oldIndex, int newIndex) {
     setState(() {
-      print('oldindex: $oldIndex');
-      print('newindex: $newIndex');
       if (newIndex > oldIndex) newIndex -= 1;
       var tmp = listSound.removeAt(oldIndex);
       listSound.insert(newIndex, tmp);
@@ -155,7 +166,6 @@ class _SoundLibState extends State<SoundLib> {
   }
 
   deleteSound(index) {
-    print('$listSound');
     int i = listSound.indexWhere((elem) => elem == index);
     listSound.removeAt(i);
     Cache().removeRecord(index);

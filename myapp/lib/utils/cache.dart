@@ -19,11 +19,21 @@ class Cache {
     fileExists = false;
   }
 
+  //JSON FUNCTION
+
   checkJSONExist() async {
     Directory directory = await getApplicationDocumentsDirectory();
     this.dir = directory;
     this.jsonFile = File(dir.path + '/' + fileName);
     this.fileExists = await jsonFile.exists();
+  }
+
+  createJSON(Map<String, dynamic> content) {
+    File file = File(dir.path + '/' + fileName);
+    file.create();
+    this.fileExists = true;
+    file.writeAsString(jsonEncode(content));
+    return file;
   }
 
   setJSON(String key, dynamic value) {
@@ -38,72 +48,34 @@ class Cache {
     }
   }
 
-  createJSON(Map<String, dynamic> content) {
-    File file = File(dir.path + '/' + fileName);
-    file.create();
-    this.fileExists = true;
-    file.writeAsString(jsonEncode(content));
-    return file;
+  // key: darkModeState / themeColor / records
+  setCache(String key, dynamic value) async {
+    if (this.fileExists == false) await this.checkJSONExist();
+    setJSON(key, value);
   }
 
-  setDarkMode(darkModeState) async {
-    await this.checkJSONExist();
-    setJSON('darkModeState', darkModeState);
-  }
-
-  getDarkMode() async {
-    await this.checkJSONExist();
+  getCacheOnKey(String key) async {
+    if (this.fileExists == false) await this.checkJSONExist();
     if (this.fileExists) {
       var jsonContent = await jsonDecode(this.jsonFile.readAsStringSync());
-      return jsonContent['darkModeState'] ?? false;
-    } else {
-      return false;
-    }
-  }
-
-  getColor() async {
-    await this.checkJSONExist();
-    if (fileExists) {
-      var jsonContent = await jsonDecode(this.jsonFile.readAsStringSync());
-      return jsonContent['themeColor'] ?? 0;
-    } else {
-      return 0;
-    }
-  }
-
-  setColor(color) async {
-    await this.checkJSONExist();
-    this.setJSON('themeColor', color);
-  }
-
-  saveRecord(name, path) async {
-    List content = [];
-    Map<String, dynamic> record;
-    await this.checkJSONExist();
-    if (this.fileExists) {
-      var jsonContent = await jsonDecode(this.jsonFile.readAsStringSync());
-      content = jsonContent['records'] ?? [];
-      int index =
-          content.indexWhere((elem) => elem.toString() == record.toString());
-
-      if (index != -1) content.removeAt(index);
-      updateRecordsIndex(content);
-      print('Contern: $content');
-    }
-    record = {'name': name, 'path': path, 'index': content.length};
-    content.add(record);
-    this.setJSON('records', content);
-  }
-
-  getRecord() async {
-    await this.checkJSONExist();
-    if (this.fileExists) {
-      var jsonContent = await jsonDecode(this.jsonFile.readAsStringSync());
-
-      return jsonContent['records'];
+      return jsonContent[key] ?? null;
     } else {
       return null;
     }
+  }
+
+  // Cache Records
+  saveRecord(name, path) async {
+    Map<String, dynamic> record;
+    List content = await getCacheOnKey('records') ?? [];
+    int index =
+        content.indexWhere((elem) => elem.toString() == record.toString());
+
+    if (index != -1) content.removeAt(index) && updateRecordsIndex(index);
+
+    record = {'name': name, 'path': path, 'index': content.length};
+    content.add(record);
+    this.setJSON('records', content);
   }
 
   updateRecordsIndex(allRecords) {
@@ -120,8 +92,6 @@ class Cache {
     var jsonContent = await jsonDecode(this.jsonFile.readAsStringSync());
     content = jsonContent['records'];
     content[elem['index']][key] = value;
-    print('CONTENT: $content');
-    print('JSON-CONTENT: $jsonContent');
     this.jsonFile.writeAsStringSync(jsonEncode(jsonContent));
   }
 

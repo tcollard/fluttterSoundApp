@@ -17,13 +17,16 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   void initState() {
-    Cache().getDarkMode().then((state) {
+    Cache().getCacheOnKey('darkModeState').then((state) {
       setState(() {
-        darkModeState = state;
+        print('Dark Cache State: $state');
+        darkModeState = (state == null || state == false) ? false : true;
+        print('DarkModeState: $darkModeState');
       });
     });
     super.initState();
   }
+
   void _openDialog(String title, Widget content) {
     showDialog(
       context: context,
@@ -34,28 +37,26 @@ class _SettingsPageState extends State<SettingsPage> {
           content: content,
           actions: [
             FlatButton(
-              child: Text('CANCEL'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                DynamicTheme.of(context).setThemeData(new ThemeData(
-                  primaryColor: _tempMainColor,
-                  brightness: Theme.of(context).brightness,
-                ));
-                setState(() => _mainColor = _tempMainColor);
-              }
-            ),
+                child: Text('CANCEL'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  DynamicTheme.of(context).setThemeData(new ThemeData(
+                    primaryColor: _tempMainColor,
+                    brightness: Theme.of(context).brightness,
+                  ));
+                  setState(() => _mainColor = _tempMainColor);
+                }),
             FlatButton(
-              child: Text('SUBMIT'),
-              onPressed: () {
-                Cache().setColor(_mainColor.value);
-                DynamicTheme.of(context).setThemeData(new ThemeData(
-                  primaryColor: _mainColor,
-                  brightness: Theme.of(context).brightness,
-                ));
-                Navigator.of(context).pop();
-                setState(() => _tempMainColor = _mainColor);
-              }
-            ),
+                child: Text('SUBMIT'),
+                onPressed: () {
+                  Cache().setCache('themeColor', _mainColor.value);
+                  DynamicTheme.of(context).setThemeData(new ThemeData(
+                    primaryColor: _mainColor,
+                    brightness: Theme.of(context).brightness,
+                  ));
+                  Navigator.of(context).pop();
+                  setState(() => _tempMainColor = _mainColor);
+                }),
           ],
         );
       },
@@ -81,7 +82,6 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -96,7 +96,7 @@ class _SettingsPageState extends State<SettingsPage> {
               onChanged: (value) {
                 setState(() {
                   darkModeState = value;
-                  Cache().setDarkMode(value);
+                  Cache().setCache('darkModeState', value);
                   DynamicTheme.of(context).setBrightness(
                       darkModeState ? Brightness.dark : Brightness.light);
                   DynamicTheme.of(context).setThemeData(ThemeData(
