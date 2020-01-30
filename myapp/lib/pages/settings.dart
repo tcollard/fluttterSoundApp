@@ -17,9 +17,7 @@ class _SettingsPageState extends State<SettingsPage> {
   void initState() {
     Cache().getCacheOnKey('darkModeState').then((state) {
       setState(() {
-        print('Dark Cache State: $state');
         darkModeState = (state == null || state == false) ? false : true;
-        print('DarkModeState: $darkModeState');
       });
     });
     super.initState();

@@ -51,12 +51,6 @@ class _SoundLibState extends State<SoundLib> {
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    // IconButton(
-                    //   icon: Icon(Icons.print),
-                    //   onPressed: () {
-                    //     print('List: $listSound');
-                    //   },
-                    // ),
                     IconButton(
                       icon: isPlaying && soundPlay == index['path']
                           ? Icon(Icons.stop)

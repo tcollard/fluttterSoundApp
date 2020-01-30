@@ -13,7 +13,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   Brightness _cacheBrigthness;
   var _cacheColor;
-  List listPages = AllPages().list;
+  List _listPages = AllPages().list;
 
   @override
   void initState() {
@@ -43,20 +43,22 @@ class _MyAppState extends State<MyApp> {
       themedWidgetBuilder: (context, theme) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
+          theme: theme,
+          title: 'Recording App',
           home: DefaultTabController(
-            length: listPages.length,
+            length: _listPages.length,
             child: Scaffold(
               appBar: AppBar(
                 title: Text('My App'),
                 bottom: TabBar(
                   isScrollable: true,
-                  tabs: listPages.map((page) {
+                  tabs: _listPages.map((page) {
                     return Tab(text: page.title, icon: Icon(page.icon));
                   }).toList(),
                 ),
               ),
               body: TabBarView(
-                children: listPages.map((page) {
+                children: _listPages.map((page) {
                   return Container(
                     child: page.pageName,
                   );
