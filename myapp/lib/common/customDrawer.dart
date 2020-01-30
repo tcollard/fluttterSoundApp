@@ -44,6 +44,16 @@ class CustomDrawer extends StatelessWidget {
                 }
               },
             ),
+            ListTile(
+              title: Text('test'),
+              onTap: () {
+                if (ModalRoute.of(context).settings.name != '/test') {
+                  Navigator.pushNamed(context, '/test');
+                } else {
+                  Navigator.pop(context);
+                }
+              },
+            ),
           ],
         ),
       ),
