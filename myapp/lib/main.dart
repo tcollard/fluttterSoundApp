@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:myapp/utils/pages.dart';
 import 'package:myapp/utils/cache.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 
 void main() => runApp(MyApp());
 
@@ -37,6 +39,7 @@ class _MyAppState extends State<MyApp> {
     return DynamicTheme(
       defaultBrightness: _cacheBrigthness,
       data: (brightness) => ThemeData(
+        textTheme: GoogleFonts.robotoSlabTextTheme(),
         accentColor: _cacheColor,
         primaryColor: _cacheColor,
         brightness: brightness,
@@ -52,7 +55,7 @@ class _MyAppState extends State<MyApp> {
               appBar: AppBar(
                 title: Text(
                   'My App',
-                  style: TextStyle(color: theme.scaffoldBackgroundColor),
+                  style: GoogleFonts.monoton(color: theme.scaffoldBackgroundColor),
                 ),
                 centerTitle: true,
                 backgroundColor: theme.primaryColor,
