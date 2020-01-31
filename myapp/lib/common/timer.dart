@@ -14,6 +14,7 @@ class ConfigTimer {
       <ValueChanged<ElapsedTime>>[];
   final Stopwatch stopwatch = Stopwatch();
   final int refreshRateMilliseconds = 30;
+  final TextStyle timerStyle = const TextStyle(fontSize: 60.0);
 }
 
 class TimerContent extends StatefulWidget {
@@ -32,6 +33,10 @@ class TimerContentState extends State<TimerContent> {
 
   void stop() {
     if (config.stopwatch.isRunning) config.stopwatch.stop();
+  }
+
+  void reset() {
+    config.stopwatch.reset();
   }
 
   @override
@@ -89,13 +94,11 @@ class _TimerTextState extends State<TimerText> {
       children: <Widget>[
         RepaintBoundary(
           child: SizedBox(
-            height: 60.0,
             child: MinutesAndSeconds(config: config),
           ),
         ),
         RepaintBoundary(
           child: SizedBox(
-            height: 60.0,
             child: Hundreds(config: config),
           ),
         )
@@ -139,7 +142,7 @@ class _MinutesAndSecondsState extends State<MinutesAndSeconds> {
   Widget build(BuildContext context) {
     String minutesStr = (minutes % 60).toString().padLeft(2, '0');
     String secondsStr = (seconds % 60).toString().padLeft(2, '0');
-    return Text('$minutesStr:$secondsStr.');
+    return Text('$minutesStr:$secondsStr.', style: config.timerStyle);
   }
 }
 
@@ -174,6 +177,6 @@ class _HundredsState extends State<Hundreds> {
   @override
   Widget build(BuildContext context) {
     String hundredsStr = (hundreds % 100).toString().padLeft(2, '0');
-    return Text(hundredsStr);
+    return Text(hundredsStr, style: config.timerStyle);
   }
 }

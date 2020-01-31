@@ -16,17 +16,20 @@ class _RecorderPageState extends State<RecorderPage> {
   bool _isRecording = false;
   bool _isPlaying = false;
   String _recordPath;
-  List<Widget> displayList = [];
-  final GlobalKey<TimerContentState> timerState = GlobalKey<TimerContentState>();
-  
+  List<Widget> recordingAction = [];
+  List<Widget> saveAction = [];
+  Widget allActions;
+
+  List<Widget> list = [];
+  final GlobalKey<TimerContentState> timerState =
+      GlobalKey<TimerContentState>();
 
   @override
   Widget build(BuildContext context) {
-    displayList = [];
     if (!_isRecording && _recordPath == null) {
-      displayList = [];
-      displayList.add(TimerContent(key: timerState));
-      displayList.add(IconButton(
+      recordingAction = [];
+      recordingAction.add(TimerContent(key: timerState));
+      recordingAction.add(IconButton(
           icon: Icon(Icons.fiber_manual_record),
           color: Colors.redAccent,
           splashColor: Theme.of(context).primaryColor,
@@ -37,11 +40,100 @@ class _RecorderPageState extends State<RecorderPage> {
               this.timerState.currentState.start();
             }
           }));
+      allActions = Center(
+        child: Container(
+          padding: EdgeInsets.only(top: 20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: recordingAction,
+          ),
+        ),
+      );
     } else if (_isRecording) {
-      displayList = [];
-      displayList.add(TimerContent(key: timerState));
-
-      displayList.add(IconButton(
+      setState(() {
+        recordingAction.removeLast();
+        recordingAction.add(IconButton(
+            icon: Icon(Icons.stop),
+            color: (Theme.of(context).brightness == Brightness.light)
+                ? Colors.black
+                : Colors.white,
+            splashColor: Theme.of(context).primaryColor,
+            iconSize: 60,
+            onPressed: () {
+              if (_isRecording) {
+                _stopRecord();
+                this.timerState.currentState.stop();
+              }
+            }));
+        allActions = Center(
+          child: Container(
+            padding: EdgeInsets.only(top: 20.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: recordingAction,
+            ),
+          ),
+        );
+      });
+    } else if (!_isRecording && _recordPath != null && !_isPlaying) {
+      setState(() {
+        saveAction = [];
+        recordingAction.removeLast();
+        recordingAction.add(IconButton(
+          icon: Icon(Icons.play_arrow),
+          color: (Theme.of(context).brightness == Brightness.light)
+              ? Colors.black
+              : Colors.white,
+          splashColor: Theme.of(context).primaryColor,
+          iconSize: 60,
+          onPressed: () {
+            if (!_isPlaying) _playRecord();
+          },
+        ));
+        saveAction.add(IconButton(
+            icon: Icon(Icons.save),
+            color: (Theme.of(context).brightness == Brightness.light)
+                ? Colors.black
+                : Colors.white,
+            splashColor: Theme.of(context).primaryColor,
+            iconSize: 60,
+            onPressed: () {
+              _saveRecord();
+              this.timerState.currentState.reset();
+            }));
+        saveAction.add(IconButton(
+            icon: Icon(Icons.delete),
+            color: (Theme.of(context).brightness == Brightness.light)
+                ? Colors.black
+                : Colors.white,
+            splashColor: Theme.of(context).primaryColor,
+            iconSize: 60,
+            onPressed: () {
+              _deleteRecord();
+              this.timerState.currentState.reset();
+            }));
+        allActions = Column(
+          children: [
+            Container(
+              padding: EdgeInsets.only(top: 20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: recordingAction,
+              ),
+            ),
+            Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: saveAction,
+              ),
+            ),
+          ],
+        );
+      });
+    } else if (!_isRecording && _recordPath != null && _isPlaying) {
+      setState(() {
+        recordingAction.removeLast();
+        recordingAction.add(IconButton(
           icon: Icon(Icons.stop),
           color: (Theme.of(context).brightness == Brightness.light)
               ? Colors.black
@@ -49,62 +141,30 @@ class _RecorderPageState extends State<RecorderPage> {
           splashColor: Theme.of(context).primaryColor,
           iconSize: 60,
           onPressed: () {
-            if (_isRecording) {
-              _stopRecord();
-              this.timerState.currentState.stop();
-            }
-          }));
-    } else if (!_isRecording && _recordPath != null) {
-      displayList = [];
-      displayList.add(IconButton(
-        icon: Icon(Icons.play_arrow),
-        color: (Theme.of(context).brightness == Brightness.light)
-            ? Colors.black
-            : Colors.white,
-        splashColor: Theme.of(context).primaryColor,
-        iconSize: 60,
-        onPressed: () {
-          if (!_isPlaying) _playRecord();
-        },
-      ));
-      displayList.add(IconButton(
-        icon: Icon(Icons.stop),
-        color: (Theme.of(context).brightness == Brightness.light)
-            ? Colors.yellow
-            : Colors.green,
-        splashColor: Theme.of(context).primaryColor,
-        iconSize: 60,
-        onPressed: () {
-          if (_isPlaying) _stopPlaying();
-        },
-      ));
-      displayList.add(IconButton(
-          icon: Icon(Icons.save),
-          color: (Theme.of(context).brightness == Brightness.light)
-              ? Colors.black
-              : Colors.white,
-          splashColor: Theme.of(context).primaryColor,
-          iconSize: 60,
-          onPressed: () {
-            _saveRecord();
-          }));
-      displayList.add(IconButton(
-          icon: Icon(Icons.delete),
-          color: (Theme.of(context).brightness == Brightness.light)
-              ? Colors.black
-              : Colors.white,
-          splashColor: Theme.of(context).primaryColor,
-          iconSize: 60,
-          onPressed: () {
-            _deleteRecord();
-          }));
+            if (_isPlaying) _stopPlaying();
+          },
+        ));
+        allActions = Column(
+          children: [
+            Container(
+              padding: EdgeInsets.only(top: 20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: recordingAction,
+              ),
+            ),
+            Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: saveAction,
+              ),
+            ),
+          ],
+        );
+      });
     }
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: displayList,
-      ),
-    );
+
+    return allActions;
   }
 
   // RECORDING FUNCTION
@@ -168,12 +228,21 @@ class _RecorderPageState extends State<RecorderPage> {
 
   // PLAYING FUNCTION
   _playRecord() async {
-    _isPlaying = true;
+    audioPlayer.onPlayerCompletion.listen((stop) {
+      setState(() {
+        _isPlaying = false;
+      });
+    });
+    setState(() {
+      _isPlaying = true;
+    });
     await audioPlayer.play(_recordPath, isLocal: true);
   }
 
   _stopPlaying() async {
-    _isPlaying = false;
+    setState(() {
+      _isPlaying = false;
+    });
     await audioPlayer.stop();
   }
 
