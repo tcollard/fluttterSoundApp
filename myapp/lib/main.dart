@@ -49,7 +49,11 @@ class _MyAppState extends State<MyApp> {
             length: _listPages.length,
             child: Scaffold(
               appBar: AppBar(
-                title: Text('My App'),
+                title: Text(
+                  'My App',
+                  style: TextStyle(color: theme.scaffoldBackgroundColor),
+                ),
+                centerTitle: true,
                 backgroundColor: theme.primaryColor,
                 elevation: 0,
                 bottom: TabBar(

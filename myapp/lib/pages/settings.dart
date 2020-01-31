@@ -10,8 +10,6 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   bool darkModeState = false;
-  var _tempMainColor;
-  var _mainColor;
 
   @override
   void initState() {
@@ -23,89 +21,69 @@ class _SettingsPageState extends State<SettingsPage> {
     super.initState();
   }
 
-  void _openDialog(String title, Widget content) {
-    showDialog(
-      context: context,
-      builder: (_) {
-        return AlertDialog(
-          contentPadding: const EdgeInsets.all(6.0),
-          title: Text(title),
-          content: content,
-          actions: [
-            FlatButton(
-                child: Text('CANCEL'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  DynamicTheme.of(context).setThemeData(new ThemeData(
-                    primaryColor: _tempMainColor,
-                    brightness: Theme.of(context).brightness,
-                  ));
-                  setState(() => _mainColor = _tempMainColor);
-                }),
-            FlatButton(
-                child: Text('SUBMIT'),
-                onPressed: () {
-                  Cache().setCache('themeColor', _mainColor.value);
-                  DynamicTheme.of(context).setThemeData(new ThemeData(
-                    primaryColor: _mainColor,
-                    brightness: Theme.of(context).brightness,
-                  ));
-                  Navigator.of(context).pop();
-                  setState(() => _tempMainColor = _mainColor);
-                }),
-          ],
-        );
-      },
-    );
-  }
-
-  void _openColorPicker() async {
-    setState(() => _tempMainColor = Theme.of(context).primaryColor);
-    _openDialog(
-      "Choose color",
-      MaterialColorPicker(
-        allowShades: false,
-        colors: fullMaterialColors,
-        selectedColor: Theme.of(context).primaryColor,
-        onMainColorChange: (color) => setState(() {
-          _mainColor = color;
-          DynamicTheme.of(context).setThemeData(new ThemeData(
-            primaryColor: _mainColor,
-            brightness: Theme.of(context).brightness,
-          ));
-        }),
-      ),
+  chooseColor() {
+    return MaterialColorPicker(
+      physics: NeverScrollableScrollPhysics(),
+      elevation: 1,
+      shrinkWrap: true,
+      allowShades: false,
+      colors: fullMaterialColors,
+      selectedColor: Theme.of(context).primaryColor,
+      onMainColorChange: (_color) => setState(() {
+        DynamicTheme.of(context).setThemeData(new ThemeData(
+          primaryColor: _color,
+          brightness: Theme.of(context).brightness,
+        ));
+        Cache().setCache('themeColor', _color.value);
+      }),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        children: <Widget>[
-          Text('Dark mode'),
-          Switch(
-            value: darkModeState,
-            onChanged: (value) {
-              setState(() {
-                darkModeState = value;
-                Cache().setCache('darkModeState', value);
-                DynamicTheme.of(context).setBrightness(
-                    darkModeState ? Brightness.dark : Brightness.light);
-                DynamicTheme.of(context).setThemeData(ThemeData(
-                  primaryColor: Theme.of(context).primaryColor,
-                  brightness:
-                      (darkModeState) ? Brightness.dark : Brightness.light,
-                ));
-              });
-            },
-          ),
-          RaisedButton(
-            child: Text('Change color'),
-            onPressed: _openColorPicker,
-          ),
-        ],
-      ),
+    return ListView(
+      children: <Widget>[
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              'Theme Color',
+              style: TextStyle(fontSize: 20.0),
+            ),
+          ],
+        ),
+        chooseColor(),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              'Dark mode',
+              style: TextStyle(fontSize: 20.0),
+            ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Switch(
+              value: darkModeState,
+              onChanged: (value) {
+                setState(() {
+                  darkModeState = value;
+                  Cache().setCache('darkModeState', value);
+                  DynamicTheme.of(context).setBrightness(
+                      darkModeState ? Brightness.dark : Brightness.light);
+                  DynamicTheme.of(context).setThemeData(ThemeData(
+                    primaryColor: Theme.of(context).primaryColor,
+                    brightness:
+                        (darkModeState) ? Brightness.dark : Brightness.light,
+                  ));
+                });
+              },
+            ),
+          ],
+        )
+      ],
     );
   }
 }
