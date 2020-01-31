@@ -31,6 +31,7 @@ class _SettingsPageState extends State<SettingsPage> {
       selectedColor: Theme.of(context).primaryColor,
       onMainColorChange: (_color) => setState(() {
         DynamicTheme.of(context).setThemeData(new ThemeData(
+          accentColor: _color,
           primaryColor: _color,
           brightness: Theme.of(context).brightness,
         ));

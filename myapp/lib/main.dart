@@ -37,6 +37,7 @@ class _MyAppState extends State<MyApp> {
     return DynamicTheme(
       defaultBrightness: _cacheBrigthness,
       data: (brightness) => ThemeData(
+        accentColor: _cacheColor,
         primaryColor: _cacheColor,
         brightness: brightness,
       ),
