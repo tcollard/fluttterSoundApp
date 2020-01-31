@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:myapp/common/timer.dart';
 import 'package:myapp/utils/cache.dart';
 import 'package:audio_recorder/audio_recorder.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -15,24 +16,32 @@ class _RecorderPageState extends State<RecorderPage> {
   bool _isRecording = false;
   bool _isPlaying = false;
   String _recordPath;
-  List<Widget> buttons = [];
+  List<Widget> displayList = [];
+  final GlobalKey<TimerContentState> timerState = GlobalKey<TimerContentState>();
+  
 
   @override
   Widget build(BuildContext context) {
-    buttons = [];
+    displayList = [];
     if (!_isRecording && _recordPath == null) {
-      buttons = [];
-      buttons.add(IconButton(
+      displayList = [];
+      displayList.add(TimerContent(key: timerState));
+      displayList.add(IconButton(
           icon: Icon(Icons.fiber_manual_record),
           color: Colors.redAccent,
           splashColor: Theme.of(context).primaryColor,
           iconSize: 60,
           onPressed: () {
-            if (!_isRecording) _startRecord();
+            if (!_isRecording) {
+              _startRecord();
+              this.timerState.currentState.start();
+            }
           }));
     } else if (_isRecording) {
-      buttons = [];
-      buttons.add(IconButton(
+      displayList = [];
+      displayList.add(TimerContent(key: timerState));
+
+      displayList.add(IconButton(
           icon: Icon(Icons.stop),
           color: (Theme.of(context).brightness == Brightness.light)
               ? Colors.black
@@ -40,11 +49,14 @@ class _RecorderPageState extends State<RecorderPage> {
           splashColor: Theme.of(context).primaryColor,
           iconSize: 60,
           onPressed: () {
-            if (_isRecording) _stopRecord();
+            if (_isRecording) {
+              _stopRecord();
+              this.timerState.currentState.stop();
+            }
           }));
     } else if (!_isRecording && _recordPath != null) {
-      buttons = [];
-      buttons.add(IconButton(
+      displayList = [];
+      displayList.add(IconButton(
         icon: Icon(Icons.play_arrow),
         color: (Theme.of(context).brightness == Brightness.light)
             ? Colors.black
@@ -55,7 +67,7 @@ class _RecorderPageState extends State<RecorderPage> {
           if (!_isPlaying) _playRecord();
         },
       ));
-      buttons.add(IconButton(
+      displayList.add(IconButton(
         icon: Icon(Icons.stop),
         color: (Theme.of(context).brightness == Brightness.light)
             ? Colors.yellow
@@ -66,7 +78,7 @@ class _RecorderPageState extends State<RecorderPage> {
           if (_isPlaying) _stopPlaying();
         },
       ));
-      buttons.add(IconButton(
+      displayList.add(IconButton(
           icon: Icon(Icons.save),
           color: (Theme.of(context).brightness == Brightness.light)
               ? Colors.black
@@ -76,7 +88,7 @@ class _RecorderPageState extends State<RecorderPage> {
           onPressed: () {
             _saveRecord();
           }));
-      buttons.add(IconButton(
+      displayList.add(IconButton(
           icon: Icon(Icons.delete),
           color: (Theme.of(context).brightness == Brightness.light)
               ? Colors.black
@@ -90,7 +102,7 @@ class _RecorderPageState extends State<RecorderPage> {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: buttons,
+        children: displayList,
       ),
     );
   }
