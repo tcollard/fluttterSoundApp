@@ -32,7 +32,7 @@ class _SettingsPageState extends State<SettingsPage> {
       selectedColor: Theme.of(context).primaryColor,
       onMainColorChange: (_color) => setState(() {
         DynamicTheme.of(context).setThemeData(new ThemeData(
-          textTheme: GoogleFonts.robotoSlabTextTheme(),
+          textTheme: GoogleFonts.robotoSlabTextTheme().apply(bodyColor: (darkModeState) ? Colors.white : Colors.black),
           accentColor: _color,
           primaryColor: _color,
           brightness: Theme.of(context).brightness,
@@ -80,7 +80,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   DynamicTheme.of(context).setBrightness(
                       darkModeState ? Brightness.dark : Brightness.light);
                   DynamicTheme.of(context).setThemeData(ThemeData(
-                    textTheme: GoogleFonts.robotoSlabTextTheme(),
+                    textTheme: GoogleFonts.robotoSlabTextTheme().apply(bodyColor: (darkModeState) ? Colors.white : Colors.black),
                     accentColor: Theme.of(context).accentColor,
                     primaryColor: Theme.of(context).primaryColor,
                     brightness:
