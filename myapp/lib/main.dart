@@ -47,7 +47,7 @@ class _MyAppState extends State<MyApp> {
             .apply(bodyColor: (!darkModeState) ? Colors.black : Colors.white),
         accentColor: _cacheColor,
         primaryColor: _cacheColor,
-        brightness: brightness,
+        brightness: _cacheBrigthness,
       ),
       themedWidgetBuilder: (context, theme) {
         return MaterialApp(
@@ -69,6 +69,7 @@ class _MyAppState extends State<MyApp> {
                 bottom: TabBar(
                   isScrollable: false,
                   labelColor: theme.primaryColor,
+                  labelStyle: GoogleFonts.robotoSlab(),
                   unselectedLabelColor: theme.scaffoldBackgroundColor,
                   indicatorSize: TabBarIndicatorSize.tab,
                   indicator: BoxDecoration(

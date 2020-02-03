@@ -11,6 +11,7 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   bool darkModeState = false;
+  Brightness brightness;
 
   @override
   void initState() {
@@ -31,15 +32,30 @@ class _SettingsPageState extends State<SettingsPage> {
       colors: fullMaterialColors,
       selectedColor: Theme.of(context).primaryColor,
       onMainColorChange: (_color) => setState(() {
+        _changeColorSettings(_color);
         DynamicTheme.of(context).setThemeData(new ThemeData(
-          textTheme: GoogleFonts.robotoSlabTextTheme().apply(bodyColor: (darkModeState) ? Colors.white : Colors.black),
+          textTheme: GoogleFonts.robotoSlabTextTheme()
+              .apply(bodyColor: (darkModeState) ? Colors.white : Colors.black),
           accentColor: _color,
           primaryColor: _color,
-          brightness: Theme.of(context).brightness,
+          brightness: brightness,
         ));
         Cache().setCache('themeColor', _color.value);
+        Cache().setCache('darkModeState', darkModeState);
       }),
     );
+  }
+
+  _changeColorSettings(_color) {
+    if (_color.value == Colors.white.value ||
+        _color.value == Colors.limeAccent.value ||
+        _color.value == Colors.yellowAccent.value) {
+      brightness = Brightness.dark;
+      darkModeState = true;
+    } else {
+      brightness = Brightness.light;
+      darkModeState = false;
+    }
   }
 
   @override
@@ -80,7 +96,9 @@ class _SettingsPageState extends State<SettingsPage> {
                   DynamicTheme.of(context).setBrightness(
                       darkModeState ? Brightness.dark : Brightness.light);
                   DynamicTheme.of(context).setThemeData(ThemeData(
-                    textTheme: GoogleFonts.robotoSlabTextTheme().apply(bodyColor: (darkModeState) ? Colors.white : Colors.black),
+                    textTheme: GoogleFonts.robotoSlabTextTheme().apply(
+                        bodyColor:
+                            (darkModeState) ? Colors.white : Colors.black),
                     accentColor: Theme.of(context).accentColor,
                     primaryColor: Theme.of(context).primaryColor,
                     brightness:
@@ -90,7 +108,7 @@ class _SettingsPageState extends State<SettingsPage> {
               },
             ),
           ],
-        )
+        ),
       ],
     );
   }
