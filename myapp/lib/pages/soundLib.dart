@@ -2,6 +2,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/common/dialog.dart';
 import 'package:myapp/utils/cache.dart';
+import 'package:flutter_share/flutter_share.dart';
 
 class SoundLib extends StatefulWidget {
   @override
@@ -108,6 +109,13 @@ class _SoundLibState extends State<SoundLib> {
                             });
                           },
                         ),
+                        IconButton(
+                          icon: Icon(
+                            Icons.share,
+                            size: 30,
+                          ),
+                          onPressed: () => share(index['path'], index['name']),
+                        ),
                       ],
                     ),
                   ),
@@ -121,6 +129,14 @@ class _SoundLibState extends State<SoundLib> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[Text('No sound for the momment')],
+    );
+  }
+
+  void share(String filePath, String name ) async {
+    await FlutterShare.shareFile(
+      title: 'Share Sound',
+      text: name,
+      filePath: filePath,
     );
   }
 
