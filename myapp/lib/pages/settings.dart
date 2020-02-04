@@ -30,6 +30,7 @@ class _SettingsPageState extends State<SettingsPage> {
       }
     });
     Cache().getCacheOnKey('darkModeState').then((state) {
+      if (!mounted) return ;
       setState(() {
         darkModeState = (state == null || state == false) ? false : true;
       });

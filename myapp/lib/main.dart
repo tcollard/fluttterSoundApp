@@ -20,6 +20,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     Cache().getCacheOnKey('darkModeState').then((state) {
+      if (!mounted) return ;
       setState(() {
         if (state != null && state != false) {
           _cacheBrigthness = Brightness.dark;
@@ -31,6 +32,7 @@ class _MyAppState extends State<MyApp> {
       });
     });
     Cache().getCacheOnKey('themeColor').then((data) {
+      if (!mounted) return ;
       setState(() {
         _cacheColor = (data != null) ? Color(data) : Colors.blue;
       });
