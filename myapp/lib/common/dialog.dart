@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class InputDialog {
-  createAlertDialog(BuildContext context, String textTitle, String textField,
+class AllDialog {
+  callMonoInputDialog(BuildContext context, String textTitle, String textField,
       Function onValidation) {
     TextEditingController nameController = TextEditingController();
     return showDialog(
@@ -31,4 +31,31 @@ class InputDialog {
           );
         });
   }
+
+    callInfoDialog(BuildContext context, String textTitle, String textContent, Function onValidation) {
+        showDialog(
+        context: context,
+        builder: (_) => new AlertDialog(
+          title: Text(textTitle),
+          content: Text(textContent),
+          elevation: 24.0,
+          actions: <Widget>[
+            FlatButton(
+              child: Text('OK'),
+              onPressed: () {
+                onValidation();
+                Navigator.pop(context);
+              },
+            ),
+            FlatButton(
+              child: Text('Never'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      );
+    }
+
 }

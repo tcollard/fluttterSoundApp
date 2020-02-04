@@ -2,7 +2,9 @@ import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:myapp/common/dialog.dart';
 import 'package:myapp/utils/cache.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -12,9 +14,21 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   bool darkModeState = false;
   Brightness brightness;
+  AllDialog _dialog = AllDialog();
 
   @override
   void initState() {
+    PermissionHandler()
+        .checkPermissionStatus(PermissionGroup.storage)
+        .then((permission) {
+      if (permission != PermissionStatus.granted) {
+        _dialog.callInfoDialog(
+            context, 'ACCESS PERMISSION', 'Please give me your permissions 🙏',
+            () async {
+          await PermissionHandler().openAppSettings();
+        });
+      }
+    });
     Cache().getCacheOnKey('darkModeState').then((state) {
       setState(() {
         darkModeState = (state == null || state == false) ? false : true;

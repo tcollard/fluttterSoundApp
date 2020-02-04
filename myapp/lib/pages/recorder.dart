@@ -24,6 +24,7 @@ class _RecorderPageState extends State<RecorderPage> {
   Color splashColor;
   List<Widget> recordingAction = [];
   List<Widget> saveAction = [];
+  AllDialog _dialog = AllDialog();
 
   final GlobalKey<TimerContentState> timerState =
       GlobalKey<TimerContentState>();
@@ -87,8 +88,7 @@ class _RecorderPageState extends State<RecorderPage> {
           splashColor: splashColor,
           iconSize: 60,
           onPressed: () {
-            InputDialog dial = InputDialog();
-            dial.createAlertDialog(context, 'Inesrt name:', _recordPath,
+            _dialog.callMonoInputDialog(context, 'Inesrt name:', _recordPath,
                 (data) {
               _saveRecord(data);
               this.timerState.currentState.reset();
@@ -140,36 +140,18 @@ class _RecorderPageState extends State<RecorderPage> {
 
   // RECORDING FUNCTION
   _startRecord() async {
-    PermissionStatus microPpermission = await PermissionHandler()
+    PermissionStatus microPermission = await PermissionHandler()
         .checkPermissionStatus(PermissionGroup.microphone);
-    PermissionStatus storePpermission = await PermissionHandler()
+    PermissionStatus storePermission = await PermissionHandler()
         .checkPermissionStatus(PermissionGroup.storage);
 
-    if (microPpermission != PermissionStatus.granted ||
-        storePpermission != PermissionStatus.granted) {
-      showDialog(
-        context: context,
-        builder: (_) => new AlertDialog(
-          title: Text('ACCESS PERMISION'),
-          content: Text('Please give me your permissions 🙏'),
-          elevation: 24.0,
-          actions: <Widget>[
-            FlatButton(
-              child: Text('OK'),
-              onPressed: () async {
-                Navigator.pop(context);
-                await PermissionHandler().openAppSettings();
-              },
-            ),
-            FlatButton(
-              child: Text('Never'),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-      );
+    if (microPermission != PermissionStatus.granted ||
+        storePermission != PermissionStatus.granted) {
+      _dialog.callInfoDialog(
+          context, 'ACCESS PERMISSION', 'Please give me your permissions 🙏',
+          () async {
+        await PermissionHandler().openAppSettings();
+      });
     }
     try {
       if (await AudioRecorder.hasPermissions) {
