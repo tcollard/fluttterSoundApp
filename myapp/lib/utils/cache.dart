@@ -100,7 +100,21 @@ class Cache {
     var jsonContent = await jsonDecode(this.jsonFile.readAsStringSync());
     content = jsonContent['records'];
     int i = content.indexWhere((record) => record.toString() == elem.toString());
+    File(content[i]['path']).delete();
     content.removeAt(i);
     this.jsonFile.writeAsStringSync(jsonEncode(jsonContent));
+  }
+
+  updateListRecords() async {
+    var recordsJson = await this.getCacheOnKey('records');
+    var jsonContent = await jsonDecode(this.jsonFile.readAsStringSync());
+    for (var i = 0; i < recordsJson.length; i++) {
+      if (!File(recordsJson[i]['path']).existsSync()) {
+        recordsJson.removeAt(i);
+        i -= 1;
+      }
+    }
+    this.jsonFile.writeAsStringSync(jsonEncode(jsonContent));
+    return recordsJson;
   }
 }

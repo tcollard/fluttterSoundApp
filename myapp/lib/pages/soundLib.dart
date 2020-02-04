@@ -33,7 +33,7 @@ class _SoundLibState extends State<SoundLib> {
   }
 
   initSoundList() async {
-    var recordsJson = await Cache().getCacheOnKey('records');
+    var recordsJson = await Cache().updateListRecords();
     setState(() {
       listSound = recordsJson;
       initBody();
