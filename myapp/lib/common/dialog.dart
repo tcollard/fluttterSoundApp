@@ -41,14 +41,14 @@ class AllDialog {
           elevation: 24.0,
           actions: <Widget>[
             FlatButton(
-              child: Text('OK'),
+              child: Text('Yes'),
               onPressed: () {
                 onValidation();
                 Navigator.pop(context);
               },
             ),
             FlatButton(
-              child: Text('Never'),
+              child: Text('No'),
               onPressed: () {
                 Navigator.pop(context);
               },

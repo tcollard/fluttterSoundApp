@@ -1,5 +1,6 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:myapp/common/dialog.dart';
 import 'package:myapp/utils/cache.dart';
 
 class SoundLib extends StatefulWidget {
@@ -14,6 +15,7 @@ class _SoundLibState extends State<SoundLib> {
   bool isPlaying = false;
   String soundPlay;
   Widget body;
+  AllDialog _dialog = AllDialog();
 
   @override
   void initState() {
@@ -44,80 +46,74 @@ class _SoundLibState extends State<SoundLib> {
     if (listSound != null && listSound.length > 0) {
       return ReorderableListView(
         children: listSound
-            .map((index) => ListTile(
-                leading: Icon(Icons.music_note),
+            .map(
+              (index) => ExpansionTile(
+                leading: IconButton(
+                  icon: isPlaying && soundPlay == index['path']
+                      ? Icon(
+                          Icons.stop,
+                          size: 30,
+                        )
+                      : Icon(
+                          Icons.play_circle_outline,
+                          size: 30,
+                        ),
+                  onPressed: () {
+                    setState(() {
+                      if (isPlaying) {
+                        stopSound();
+                      } else {
+                        playSound(index['path']);
+                      }
+                    });
+                  },
+                ),
                 key: ObjectKey(index),
                 title: Text('${index['name']}'),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    IconButton(
-                      icon: isPlaying && soundPlay == index['path']
-                          ? Icon(Icons.stop)
-                          : Icon(Icons.play_circle_outline),
-                      onPressed: () {
-                        setState(() {
-                          if (isPlaying) {
-                            stopSound();
-                          } else {
-                            playSound(index['path']);
-                          }
-                        });
-                      },
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.mode_edit),
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          child: Dialog(
-                            child: Column(
-                              children: <Widget>[
-                                Text('Change name:'),
-                                TextField(
-                                  controller: inputNameController,
-                                  decoration:
-                                      InputDecoration(hintText: index['name']),
-                                ),
-                                Row(
-                                  children: <Widget>[
-                                    FlatButton(
-                                        child: Text('OK'),
-                                        onPressed: () {
-                                          setState(() {
-                                            Cache().updateRecord(
-                                                'name',
-                                                inputNameController.text,
-                                                index);
-                                            index['name'] =
-                                                inputNameController.text;
-                                          });
-
-                                          Navigator.of(context).pop();
-                                        }),
-                                    FlatButton(
-                                        child: Text('Cancel'),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        }),
-                                  ],
-                                ),
-                              ],
-                            ),
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.only(top: 5, bottom: 5),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            Icons.mode_edit,
+                            size: 30,
                           ),
-                        );
-                      },
+                          onPressed: () {
+                            _dialog.callMonoInputDialog(
+                                context, 'Change name', index['name'], (data) {
+                              setState(() {
+                                Cache().updateRecord('name', data, index);
+                                index['name'] = data;
+                              });
+                            });
+                          },
+                        ),
+                        IconButton(
+                          icon: Icon(
+                            Icons.delete_forever,
+                            size: 30,
+                          ),
+                          onPressed: () {
+                            _dialog.callInfoDialog(
+                                context,
+                                'Delete Sound',
+                                'Do you want to remove `${index["name"]}`',
+                                () {
+                                      setState(() {
+                                        deleteSound(index);
+                                      });
+                                    });
+                          },
+                        ),
+                      ],
                     ),
-                    IconButton(
-                      icon: Icon(Icons.delete_forever),
-                      onPressed: () {
-                        setState(() {
-                          deleteSound(index);
-                        });
-                      },
-                    ),
-                  ],
-                )))
+                  ),
+                ],
+              ),
+            )
             .toList(),
         onReorder: updateIndex,
       );
