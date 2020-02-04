@@ -36,6 +36,9 @@ class _SoundLibState extends State<SoundLib> {
 
   initSoundList() async {
     var recordsJson = await Cache().updateListRecords();
+    if (!mounted) {
+      return;
+    }
     setState(() {
       listSound = recordsJson;
       initBody();
@@ -97,15 +100,12 @@ class _SoundLibState extends State<SoundLib> {
                             size: 30,
                           ),
                           onPressed: () {
-                            _dialog.callInfoDialog(
-                                context,
-                                'Delete Sound',
-                                'Do you want to remove `${index["name"]}`',
-                                () {
-                                      setState(() {
-                                        deleteSound(index);
-                                      });
-                                    });
+                            _dialog.callInfoDialog(context, 'Delete Sound',
+                                'Do you want to remove `${index["name"]}`', () {
+                              setState(() {
+                                deleteSound(index);
+                              });
+                            });
                           },
                         ),
                       ],
@@ -129,6 +129,7 @@ class _SoundLibState extends State<SoundLib> {
       if (newIndex > oldIndex) newIndex -= 1;
       var tmp = listSound.removeAt(oldIndex);
       listSound.insert(newIndex, tmp);
+      Cache().saveRecordOrder(listSound);
     });
   }
 

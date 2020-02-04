@@ -99,7 +99,8 @@ class Cache {
     List content = [];
     var jsonContent = await jsonDecode(this.jsonFile.readAsStringSync());
     content = jsonContent['records'];
-    int i = content.indexWhere((record) => record.toString() == elem.toString());
+    int i =
+        content.indexWhere((record) => record.toString() == elem.toString());
     File(content[i]['path']).delete();
     content.removeAt(i);
     this.jsonFile.writeAsStringSync(jsonEncode(jsonContent));
@@ -115,6 +116,17 @@ class Cache {
       }
     }
     this.jsonFile.writeAsStringSync(jsonEncode(jsonContent));
+    recordsJson
+      ..sort((a, b) {
+        return (a['index'] as int).compareTo((b['index'] as int));
+      });
     return recordsJson;
+  }
+
+  saveRecordOrder(list) {
+    for (var i = 0; i < list.length; i++) {
+      list[i]['index'] = i;
+    }
+    this.setCache('records', list);
   }
 }
