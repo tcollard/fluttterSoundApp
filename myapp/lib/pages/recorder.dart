@@ -87,17 +87,19 @@ class _RecorderPageState extends State<RecorderPage> {
         ));
       } else {
         recordingAction.removeAt(recordingAction.length - 2);
-        recordingAction.insert(recordingAction.length - 1, IconButton(
-          icon: Icon(Icons.play_arrow),
-          color: (Theme.of(context).brightness == Brightness.light)
-              ? Colors.black
-              : Colors.white,
-          splashColor: Theme.of(context).primaryColor,
-          iconSize: 60,
-          onPressed: () {
-            if (!_isPlaying) _playRecord();
-          },
-        ));
+        recordingAction.insert(
+            recordingAction.length - 1,
+            IconButton(
+              icon: Icon(Icons.play_arrow),
+              color: (Theme.of(context).brightness == Brightness.light)
+                  ? Colors.black
+                  : Colors.white,
+              splashColor: Theme.of(context).primaryColor,
+              iconSize: 60,
+              onPressed: () {
+                if (!_isPlaying) _playRecord();
+              },
+            ));
       }
       if (recordingAction.length == 2) {
         recordingAction.add(ProgressBar(key: progressBar));
@@ -110,8 +112,11 @@ class _RecorderPageState extends State<RecorderPage> {
           splashColor: Theme.of(context).primaryColor,
           iconSize: 60,
           onPressed: () {
-            _saveRecord();
-            this.timerState.currentState.reset();
+            InputDialog dial = InputDialog();
+            dial.createAlertDialog(context, 'Inesrt name:', _recordPath, (data) {
+              _saveRecord(data);
+              this.timerState.currentState.reset();
+            });
           }));
       saveAction.add(IconButton(
           icon: Icon(Icons.delete),
@@ -265,8 +270,8 @@ class _RecorderPageState extends State<RecorderPage> {
   }
 
   // SAVE / DELETE RECORDING
-  _saveRecord() {
-    Cache().saveRecord(_recordPath, _recordPath);
+  _saveRecord(String name) {
+    Cache().saveRecord((name.length > 0) ? name : _recordPath, _recordPath);
     setState(() {
       _recordPath = null;
     });
