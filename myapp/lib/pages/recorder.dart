@@ -43,10 +43,23 @@ class _RecorderPageState extends State<RecorderPage> {
       recordingAction.addAll([
         TimerContent(key: timerState),
         IconButton(
-            icon: Icon(Icons.fiber_manual_record),
-            color: Colors.redAccent,
+            // icon: Icon(Icons.fiber_manual_record),
+            padding: EdgeInsets.only(top: 50),
+            icon: Container(
+              height: 200,
+              width: 200,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Theme.of(context).primaryColor),
+              child: Icon(
+                Icons.fiber_manual_record,
+                color: Theme.of(context).backgroundColor,
+                size: 80,
+              ),
+            ),
+            color: color,
             splashColor: splashColor,
-            iconSize: 60,
+            iconSize: 200,
             onPressed: () {
               if (!_isRecording) _startRecord();
             }),
@@ -54,13 +67,21 @@ class _RecorderPageState extends State<RecorderPage> {
     } else if (_isRecording) {
       recordingAction.replaceRange(recordingLength - 1, recordingLength, [
         IconButton(
-            icon: SpinKitDoubleBounce(
-              color: Colors.redAccent,
-              size: 150,
+            padding: EdgeInsets.only(top: 50),
+            icon: Container(
+              height: 200,
+              width: 200,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Theme.of(context).primaryColor),
+              child: SpinKitDoubleBounce(
+                color: Theme.of(context).backgroundColor,
+                size: 150,
+              ),
             ),
             color: color,
             splashColor: splashColor,
-            iconSize: 150,
+            iconSize: 200,
             onPressed: () {
               if (_isRecording) _stopRecord();
             })
@@ -94,7 +115,7 @@ class _RecorderPageState extends State<RecorderPage> {
           splashColor: splashColor,
           iconSize: 60,
           onPressed: () {
-            _dialog.callMonoInputDialog(context, 'Inesrt name:', _recordPath,
+            _dialog.callMonoInputDialog(context, 'Insert name:', _recordPath,
                 (data) {
               _saveRecord(data);
               this.timerState.currentState.reset();
@@ -154,7 +175,7 @@ class _RecorderPageState extends State<RecorderPage> {
     if (microPermission != PermissionStatus.granted ||
         storePermission != PermissionStatus.granted) {
       _dialog.callInfoDialog(
-          context, 'ACCESS PERMISSION', 'Please give me your permissions 🙏',
+          context, 'ACCESS PERMISSION', 'Please give me your permissions to record and save 🙏',
           () async {
         await PermissionHandler().openAppSettings();
       });

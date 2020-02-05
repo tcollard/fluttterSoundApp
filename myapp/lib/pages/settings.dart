@@ -23,7 +23,7 @@ class _SettingsPageState extends State<SettingsPage> {
         .then((permission) {
       if (permission != PermissionStatus.granted) {
         _dialog.callInfoDialog(
-            context, 'ACCESS PERMISSION', 'Please give me your permissions 🙏',
+            context, 'ACCESS PERMISSION', 'Please give me your permissions to record and save 🙏',
             () async {
           await PermissionHandler().openAppSettings();
         });
