@@ -7,6 +7,7 @@ import 'package:myapp/utils/cache.dart';
 import 'package:audio_recorder/audio_recorder.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class RecorderPage extends StatefulWidget {
   @override
@@ -53,10 +54,13 @@ class _RecorderPageState extends State<RecorderPage> {
     } else if (_isRecording) {
       recordingAction.replaceRange(recordingLength - 1, recordingLength, [
         IconButton(
-            icon: Icon(Icons.stop),
+            icon: SpinKitDoubleBounce(
+              color: Colors.redAccent,
+              size: 150,
+            ),
             color: color,
             splashColor: splashColor,
-            iconSize: 60,
+            iconSize: 150,
             onPressed: () {
               if (_isRecording) _stopRecord();
             })
@@ -74,7 +78,9 @@ class _RecorderPageState extends State<RecorderPage> {
             splashColor: splashColor,
             iconSize: 60,
             onPressed: () {
-              if (!_isPlaying) _playRecord();
+              if (!_isPlaying) {
+                _playRecord();
+              }
             },
           ),
         ],
@@ -161,7 +167,7 @@ class _RecorderPageState extends State<RecorderPage> {
         setState(() {
           _isRecording = true;
         });
-      } else {}
+      }
     } catch (e) {
       setState(() {
         _isRecording = false;
