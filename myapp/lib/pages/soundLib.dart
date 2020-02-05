@@ -49,80 +49,78 @@ class _SoundLibState extends State<SoundLib> {
   initBody() {
     if (listSound != null && listSound.length > 0) {
       return ReorderableListView(
-        children: listSound
-            .map(
-              (index) => ExpansionTile(
-                leading: IconButton(
-                  icon: isPlaying && soundPlay == index['path']
-                      ? Icon(
-                          Icons.stop,
-                          size: 30,
-                        )
-                      : Icon(
-                          Icons.play_circle_outline,
-                          size: 30,
-                        ),
-                  onPressed: () {
-                    setState(() {
-                      if (isPlaying) {
-                        stopSound();
-                      } else {
-                        playSound(index['path']);
-                      }
-                    });
-                  },
-                ),
-                key: ObjectKey(index),
-                title: Text('${index['name']}'),
-                children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.only(top: 5, bottom: 5),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        IconButton(
-                          icon: Icon(
-                            Icons.mode_edit,
-                            size: 30,
-                          ),
-                          onPressed: () {
-                            _dialog.callMonoInputDialog(
-                                context, 'Change name', index['name'], (data) {
-                              setState(() {
-                                Cache().updateRecord('name', data, index);
-                                index['name'] = data;
-                              });
-                            });
-                          },
-                        ),
-                        IconButton(
-                          icon: Icon(
-                            Icons.delete_forever,
-                            size: 30,
-                          ),
-                          onPressed: () {
-                            _dialog.callInfoDialog(context, 'Delete Sound',
-                                'Do you want to remove `${index["name"]}`', () {
-                              setState(() {
-                                deleteSound(index);
-                              });
-                            });
-                          },
-                        ),
-                        IconButton(
-                          icon: Icon(
-                            Icons.share,
-                            size: 30,
-                          ),
-                          onPressed: () => share(index['path'], index['name']),
-                        ),
-                      ],
+        children: listSound.map((index) {
+          return Container(
+            color: (index['index'] % 2 == 0) ? Theme.of(context).backgroundColor.withOpacity(0.5) : Theme.of(context).backgroundColor.withOpacity(0.3),
+            padding: EdgeInsets.only(top: 5, bottom: 5),
+            key: ObjectKey(index),
+            child: ListTile(
+              leading: IconButton(
+                icon: isPlaying && soundPlay == index['path']
+                    ? Icon(
+                        Icons.stop,
+                        size: 30,
+                      )
+                    : Icon(
+                        Icons.play_circle_outline,
+                        size: 30,
+                      ),
+                onPressed: () {
+                  setState(() {
+                    if (isPlaying) {
+                      stopSound();
+                    } else {
+                      playSound(index['path']);
+                    }
+                  });
+                },
+              ),
+              key: ObjectKey(index),
+              title: Text('${index['name']}'),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.mode_edit,
+                      size: 30,
                     ),
+                    onPressed: () {
+                      _dialog.callMonoInputDialog(
+                          context, 'Change name', index['name'], (data) {
+                        setState(() {
+                          Cache().updateRecord('name', data, index);
+                          index['name'] = data;
+                        });
+                      });
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      Icons.delete_forever,
+                      size: 30,
+                    ),
+                    onPressed: () {
+                      _dialog.callInfoDialog(context, 'Delete Sound',
+                          'Do you want to remove `${index["name"]}`', () {
+                        setState(() {
+                          deleteSound(index);
+                        });
+                      });
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      Icons.share,
+                      size: 30,
+                    ),
+                    onPressed: () => share(index['path'], index['name']),
                   ),
                 ],
               ),
-            )
-            .toList(),
+            ),
+          );
+        }).toList(),
         onReorder: updateIndex,
       );
     }
@@ -132,7 +130,7 @@ class _SoundLibState extends State<SoundLib> {
     );
   }
 
-  void share(String filePath, String name ) async {
+  void share(String filePath, String name) async {
     await FlutterShare.shareFile(
       title: 'Share Sound',
       text: name,
