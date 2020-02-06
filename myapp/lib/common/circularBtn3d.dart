@@ -11,7 +11,7 @@ class CircularBtn3d extends StatelessWidget {
   Widget build(BuildContext context) {
     Color _setColorBoxShadow() {
       return (Theme.of(context).brightness == Brightness.dark)
-          ? Colors.white.withOpacity(0.1) // black background
+          ? Colors.white.withOpacity(0.05) // black background
           : Colors.white.withOpacity(1); // white background
     }
 
