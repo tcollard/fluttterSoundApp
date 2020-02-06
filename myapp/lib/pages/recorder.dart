@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:myapp/common/circularBtn3d.dart';
 import 'package:myapp/common/dialog.dart';
 import 'package:myapp/common/progressBar.dart';
 import 'package:myapp/common/timer.dart';
@@ -26,20 +27,10 @@ class _RecorderPageState extends State<RecorderPage> {
   List<Widget> recordingAction = [];
   List<Widget> saveAction = [];
   AllDialog _dialog = AllDialog();
-  Color whiteShadow;
 
   final GlobalKey<TimerContentState> timerState =
       GlobalKey<TimerContentState>();
   final GlobalKey<ProgressBarState> progressBar = GlobalKey<ProgressBarState>();
-
-  _changeWhiteColorBoxShadow() {
-    setState(() {
-      whiteShadow = (Theme.of(context).brightness == Brightness.dark)
-          ? Colors.white.withOpacity(0.1) // black background
-          : Colors.white.withOpacity(1); // white background
-    });
-    return whiteShadow;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,79 +39,48 @@ class _RecorderPageState extends State<RecorderPage> {
         ? Colors.black
         : Colors.white;
     splashColor = Theme.of(context).primaryColor;
-    if (!_isRecording && _recordPath == null) {
+    if (!this._isRecording && _recordPath == null) {
       recordingAction.clear();
-      recordingAction.addAll([
-        TimerContent(key: timerState),
-        IconButton(
-            padding: EdgeInsets.only(top: 50),
-            icon: Container(
-              height: 200,
-              width: 200,
-              decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        offset: Offset.fromDirection(.8, 20),
-                        blurRadius: 20.0,
-                        spreadRadius: 0.0),
-                    BoxShadow(
-                        color: _changeWhiteColorBoxShadow(),
-                        offset: Offset.fromDirection(3.8, 15),
-                        blurRadius: 20.0,
-                        spreadRadius: 0.0),
-                  ],
-                  shape: BoxShape.circle,
-                  color: Theme.of(context).scaffoldBackgroundColor),
-              child: Icon(
-                Icons.fiber_manual_record,
-                color: Theme.of(context).backgroundColor,
-                size: 80,
-              ),
+      recordingAction.addAll(
+        [
+          TimerContent(key: timerState),
+          CircularBtn3d(
+            Icon(
+              Icons.fiber_manual_record,
+              color: Colors.redAccent,
+              size: 80,
             ),
-            color: color,
-            splashColor: splashColor,
-            iconSize: 200,
-            onPressed: () {
-              if (!_isRecording) _startRecord();
-            }),
-      ]);
-    } else if (_isRecording) {
-      recordingAction.replaceRange(recordingLength - 1, recordingLength, [
-        IconButton(
-            padding: EdgeInsets.only(top: 50),
-            icon: Container(
-              height: 200,
-              width: 200,
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      offset: Offset.fromDirection(.8, 20),
-                      blurRadius: 20.0,
-                      spreadRadius: 0.0),
-                  BoxShadow(
-                      color: _changeWhiteColorBoxShadow(),
-                      offset: Offset.fromDirection(3.8, 15),
-                      blurRadius: 20.0,
-                      spreadRadius: 0.0),
-                ],
-                shape: BoxShape.circle,
-                color: Theme.of(context).scaffoldBackgroundColor,
-              ),
-              child: SpinKitDoubleBounce(
-                color: Theme.of(context).backgroundColor,
-                size: 175,
-              ),
+            200,
+            Theme.of(context).scaffoldBackgroundColor,
+            () {
+              setState(() {
+                _startRecord();
+              });
+            },
+          ),
+        ],
+      );
+    } else if (this._isRecording) {
+      recordingAction.replaceRange(
+        recordingLength - 1,
+        recordingLength,
+        [
+          CircularBtn3d(
+            SpinKitDoubleBounce(
+              color: Colors.redAccent,
+              size: 175,
             ),
-            color: color,
-            splashColor: splashColor,
-            iconSize: 200,
-            onPressed: () {
-              if (_isRecording) _stopRecord();
-            })
-      ]);
-    } else if (!_isRecording && _recordPath != null && !_isPlaying) {
+            200,
+            Theme.of(context).scaffoldBackgroundColor,
+            () {
+              setState(() {
+                _stopRecord();
+              });
+            },
+          ),
+        ],
+      );
+    } else if (!this._isRecording && _recordPath != null && !this._isPlaying) {
       saveAction.clear();
       int index = recordingLength - ((recordingLength == 2) ? 1 : 2);
       recordingAction.replaceRange(
@@ -133,7 +93,7 @@ class _RecorderPageState extends State<RecorderPage> {
             splashColor: splashColor,
             iconSize: 60,
             onPressed: () {
-              if (!_isPlaying) {
+              if (!this._isPlaying) {
                 _playRecord();
               }
             },
@@ -164,7 +124,7 @@ class _RecorderPageState extends State<RecorderPage> {
             _deleteRecord();
             this.timerState.currentState.reset();
           }));
-    } else if (!_isRecording && _recordPath != null && _isPlaying) {
+    } else if (!this._isRecording && _recordPath != null && this._isPlaying) {
       recordingAction.replaceRange(recordingLength - 2, recordingLength - 1, [
         IconButton(
           icon: Icon(Icons.stop),
@@ -172,7 +132,7 @@ class _RecorderPageState extends State<RecorderPage> {
           splashColor: splashColor,
           iconSize: 60,
           onPressed: () {
-            if (_isPlaying) _stopPlaying();
+            if (this._isPlaying) _stopPlaying();
           },
         )
       ]);
@@ -219,12 +179,12 @@ class _RecorderPageState extends State<RecorderPage> {
         await AudioRecorder.start();
         await AudioRecorder.isRecording;
         setState(() {
-          _isRecording = true;
+          this._isRecording = true;
         });
       }
     } catch (e) {
       setState(() {
-        _isRecording = false;
+        this._isRecording = false;
       });
     }
   }
@@ -235,7 +195,7 @@ class _RecorderPageState extends State<RecorderPage> {
       var recording = await AudioRecorder.stop();
       await AudioRecorder.isRecording;
       setState(() {
-        _isRecording = false;
+        this._isRecording = false;
         _recordPath = recording.path;
         _duration = recording.duration;
       });
@@ -247,21 +207,21 @@ class _RecorderPageState extends State<RecorderPage> {
     audioPlayer.onPlayerCompletion.listen((stop) {
       this.progressBar.currentState.updatePosition(_duration, _duration);
       setState(() {
-        _isPlaying = false;
+        this._isPlaying = false;
       });
     });
     audioPlayer.onAudioPositionChanged.listen((position) {
       this.progressBar.currentState.updatePosition(position, _duration);
     });
     setState(() {
-      _isPlaying = true;
+      this._isPlaying = true;
     });
     await audioPlayer.play(_recordPath, isLocal: true);
   }
 
   _stopPlaying() async {
     setState(() {
-      _isPlaying = false;
+      this._isPlaying = false;
     });
     await audioPlayer.stop();
   }
