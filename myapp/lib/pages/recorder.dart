@@ -26,10 +26,20 @@ class _RecorderPageState extends State<RecorderPage> {
   List<Widget> recordingAction = [];
   List<Widget> saveAction = [];
   AllDialog _dialog = AllDialog();
+  Color whiteShadow;
 
   final GlobalKey<TimerContentState> timerState =
       GlobalKey<TimerContentState>();
   final GlobalKey<ProgressBarState> progressBar = GlobalKey<ProgressBarState>();
+
+  _changeWhiteColorBoxShadow() {
+    setState(() {
+      whiteShadow = (Theme.of(context).brightness == Brightness.dark)
+          ? Colors.white.withOpacity(0.1) // black background
+          : Colors.white.withOpacity(1); // white background
+    });
+    return whiteShadow;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,14 +53,25 @@ class _RecorderPageState extends State<RecorderPage> {
       recordingAction.addAll([
         TimerContent(key: timerState),
         IconButton(
-            // icon: Icon(Icons.fiber_manual_record),
             padding: EdgeInsets.only(top: 50),
             icon: Container(
               height: 200,
               width: 200,
               decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        offset: Offset.fromDirection(.8, 20),
+                        blurRadius: 20.0,
+                        spreadRadius: 0.0),
+                    BoxShadow(
+                        color: _changeWhiteColorBoxShadow(),
+                        offset: Offset.fromDirection(3.8, 15),
+                        blurRadius: 20.0,
+                        spreadRadius: 0.0),
+                  ],
                   shape: BoxShape.circle,
-                  color: Theme.of(context).primaryColor),
+                  color: Theme.of(context).scaffoldBackgroundColor),
               child: Icon(
                 Icons.fiber_manual_record,
                 color: Theme.of(context).backgroundColor,
@@ -72,11 +93,24 @@ class _RecorderPageState extends State<RecorderPage> {
               height: 200,
               width: 200,
               decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Theme.of(context).primaryColor),
+                boxShadow: [
+                  BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      offset: Offset.fromDirection(.8, 20),
+                      blurRadius: 20.0,
+                      spreadRadius: 0.0),
+                  BoxShadow(
+                      color: _changeWhiteColorBoxShadow(),
+                      offset: Offset.fromDirection(3.8, 15),
+                      blurRadius: 20.0,
+                      spreadRadius: 0.0),
+                ],
+                shape: BoxShape.circle,
+                color: Theme.of(context).scaffoldBackgroundColor,
+              ),
               child: SpinKitDoubleBounce(
                 color: Theme.of(context).backgroundColor,
-                size: 150,
+                size: 175,
               ),
             ),
             color: color,
@@ -174,9 +208,8 @@ class _RecorderPageState extends State<RecorderPage> {
 
     if (microPermission != PermissionStatus.granted ||
         storePermission != PermissionStatus.granted) {
-      _dialog.callInfoDialog(
-          context, 'ACCESS PERMISSION', 'Please give me your permissions to record and save 🙏',
-          () async {
+      _dialog.callInfoDialog(context, 'ACCESS PERMISSION',
+          'Please give me your permissions to record and save 🙏', () async {
         await PermissionHandler().openAppSettings();
       });
     }

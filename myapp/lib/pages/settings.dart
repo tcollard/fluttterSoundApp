@@ -22,15 +22,14 @@ class _SettingsPageState extends State<SettingsPage> {
         .checkPermissionStatus(PermissionGroup.storage)
         .then((permission) {
       if (permission != PermissionStatus.granted) {
-        _dialog.callInfoDialog(
-            context, 'ACCESS PERMISSION', 'Please give me your permissions to record and save 🙏',
-            () async {
+        _dialog.callInfoDialog(context, 'ACCESS PERMISSION',
+            'Please give me your permissions to record and save 🙏', () async {
           await PermissionHandler().openAppSettings();
         });
       }
     });
     Cache().getCacheOnKey('darkModeState').then((state) {
-      if (!mounted) return ;
+      if (!mounted) return;
       setState(() {
         darkModeState = (state == null || state == false) ? false : true;
       });
@@ -49,11 +48,14 @@ class _SettingsPageState extends State<SettingsPage> {
       onMainColorChange: (_color) => setState(() {
         _changeColorSettings(_color);
         DynamicTheme.of(context).setThemeData(new ThemeData(
-          textTheme: GoogleFonts.robotoSlabTextTheme()
-              .apply(bodyColor: (darkModeState) ? Colors.white : Colors.black),
+          textTheme: GoogleFonts.robotoSlabTextTheme().apply(
+            bodyColor: (darkModeState) ? Colors.white : Colors.black,
+          ),
           accentColor: _color,
           primaryColor: _color,
           brightness: brightness,
+          scaffoldBackgroundColor:
+              (darkModeState) ?  Colors.grey[850] : Colors.grey.shade200,
         ));
         Cache().setCache('themeColor', _color.value);
         Cache().setCache('darkModeState', darkModeState);
@@ -108,12 +110,10 @@ class _SettingsPageState extends State<SettingsPage> {
                 setState(() {
                   darkModeState = value;
                   Cache().setCache('darkModeState', value);
-                  DynamicTheme.of(context).setBrightness(
-                      darkModeState ? Brightness.dark : Brightness.light);
                   DynamicTheme.of(context).setThemeData(ThemeData(
                     textTheme: GoogleFonts.robotoSlabTextTheme().apply(
-                        bodyColor:
-                            (darkModeState) ? Colors.white : Colors.black),
+                      bodyColor: (darkModeState) ? Colors.white : Colors.black,
+                    ),
                     accentColor: Theme.of(context).accentColor,
                     primaryColor: Theme.of(context).primaryColor,
                     brightness:

@@ -52,7 +52,7 @@ class _SoundLibState extends State<SoundLib> {
         children: listSound.map((index) {
           return Container(
             color: (index['index'] % 2 == 0)
-                ? Theme.of(context).primaryColor.withOpacity(0.5)
+                ? Theme.of(context).primaryColor.withOpacity(0)
                 : Theme.of(context).primaryColor.withOpacity(0.3),
             padding: EdgeInsets.only(top: 5, bottom: 5),
             key: ObjectKey(index),

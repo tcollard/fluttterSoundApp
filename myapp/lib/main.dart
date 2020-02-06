@@ -50,6 +50,7 @@ class _MyAppState extends State<MyApp> {
         accentColor: _cacheColor,
         primaryColor: _cacheColor,
         brightness: _cacheBrigthness,
+        scaffoldBackgroundColor: (!darkModeState) ? Colors.grey.shade200 : Theme.of(context).scaffoldBackgroundColor,
       ),
       themedWidgetBuilder: (context, theme) {
         return MaterialApp(
