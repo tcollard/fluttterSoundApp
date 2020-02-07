@@ -14,7 +14,6 @@ class ConfigTimer {
       <ValueChanged<ElapsedTime>>[];
   final Stopwatch stopwatch = Stopwatch();
   final int refreshRateMilliseconds = 30;
-  final TextStyle timerStyle = const TextStyle(fontSize: 60.0);
 }
 
 class TimerContent extends StatefulWidget {
@@ -90,6 +89,7 @@ class _TimerTextState extends State<TimerText> {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         RepaintBoundary(
@@ -142,7 +142,8 @@ class _MinutesAndSecondsState extends State<MinutesAndSeconds> {
   Widget build(BuildContext context) {
     String minutesStr = (minutes % 60).toString().padLeft(2, '0');
     String secondsStr = (seconds % 60).toString().padLeft(2, '0');
-    return Text('$minutesStr:$secondsStr.', style: config.timerStyle);
+    TextStyle timerStyle = TextStyle(fontSize: 60.0, color: (Theme.of(context).brightness == Brightness.dark) ? Colors.white : Colors.grey );
+    return Text('$minutesStr:$secondsStr.', style: timerStyle);
   }
 }
 
@@ -177,6 +178,7 @@ class _HundredsState extends State<Hundreds> {
   @override
   Widget build(BuildContext context) {
     String hundredsStr = (hundreds % 100).toString().padLeft(2, '0');
-    return Text(hundredsStr, style: config.timerStyle);
+    TextStyle timerStyle = TextStyle(fontSize: 60.0, color: (Theme.of(context).brightness == Brightness.dark) ? Colors.white : Colors.grey );
+    return Text(hundredsStr, style: timerStyle);
   }
 }

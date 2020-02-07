@@ -24,11 +24,7 @@ class ProgressBarState extends State<ProgressBar> {
         min: 0,
         max: 100,
         value: _position,
-        onChanged: (newPosition) {
-          setState(() {
-            _position = newPosition;
-          });
-        },
+        onChanged: null, 
       ),
     );
   }

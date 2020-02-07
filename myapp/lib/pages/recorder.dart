@@ -34,6 +34,12 @@ class _RecorderPageState extends State<RecorderPage> {
 
   @override
   Widget build(BuildContext context) {
+    Color _setColorBoxShadow() {
+      return (Theme.of(context).brightness == Brightness.dark)
+          ? Colors.white.withOpacity(0.05) // black background
+          : Colors.white.withOpacity(1); // white background
+    }
+
     recordingLength = recordingAction.length;
     color = (Theme.of(context).brightness == Brightness.light)
         ? Colors.black
@@ -43,8 +49,28 @@ class _RecorderPageState extends State<RecorderPage> {
       recordingAction.clear();
       recordingAction.addAll(
         [
-          TimerContent(key: timerState),
-          CircularBtn3d(
+          Container(
+            padding: EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Theme.of(context).scaffoldBackgroundColor,
+              shape: BoxShape.rectangle,
+              boxShadow: [
+                BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    offset: Offset.fromDirection(3.8, 2),
+                    blurRadius: 2.0,
+                    spreadRadius: 0.0),
+                BoxShadow(
+                    color: _setColorBoxShadow(),
+                    offset: Offset.fromDirection(.8, 2),
+                    blurRadius: 2.0,
+                    spreadRadius: 0.0),
+              ],
+            ),
+            child: TimerContent(key: timerState),
+          ),
+          PrimaryCircularBtn3d(
             Icon(
               Icons.fiber_manual_record,
               color: Colors.redAccent,
@@ -65,7 +91,7 @@ class _RecorderPageState extends State<RecorderPage> {
         recordingLength - 1,
         recordingLength,
         [
-          CircularBtn3d(
+          PrimaryCircularBtn3d(
             SpinKitDoubleBounce(
               color: Colors.redAccent,
               size: 175,
@@ -87,54 +113,87 @@ class _RecorderPageState extends State<RecorderPage> {
         index,
         index + 1,
         [
-          IconButton(
-            icon: Icon(Icons.play_arrow),
-            color: color,
-            splashColor: splashColor,
-            iconSize: 60,
-            onPressed: () {
-              if (!this._isPlaying) {
+          PrimaryCircularBtn3d(
+            Icon(
+              Icons.play_arrow,
+              color: color,
+              size: 80,
+            ),
+            200,
+            Theme.of(context).scaffoldBackgroundColor,
+            () {
+              setState(() {
                 _playRecord();
-              }
+              });
             },
           ),
         ],
       );
       if (recordingLength == 2) {
-        recordingAction.add(ProgressBar(key: progressBar));
+        recordingAction.add(
+          Container(
+            padding: const EdgeInsets.only(top: 50),
+            child: ProgressBar(key: progressBar),
+          ),
+        );
       }
-      saveAction.add(IconButton(
-          icon: Icon(Icons.save),
-          color: color,
-          splashColor: splashColor,
-          iconSize: 60,
-          onPressed: () {
-            _dialog.callMonoInputDialog(context, 'Insert name:', _recordPath,
+      saveAction.add(
+        SecondaryCircularBtn3d(
+          Icon(
+            Icons.save,
+            color: color,
+            size: 50,
+          ),
+          90,
+          Theme.of(context).scaffoldBackgroundColor,
+          () {
+            setState(() {
+              _dialog.callMonoInputDialog(
+                context,
+                'Insert name:',
+                _recordPath,
                 (data) {
-              _saveRecord(data);
+                  _saveRecord(data);
+                  this.timerState.currentState.reset();
+                },
+              );
+            });
+          },
+        ),
+      );
+      saveAction.add(
+        SecondaryCircularBtn3d(
+          Icon(
+            Icons.delete,
+            color: color,
+            size: 50,
+          ),
+          90,
+          Theme.of(context).scaffoldBackgroundColor,
+          () {
+            setState(() {
+              _deleteRecord();
               this.timerState.currentState.reset();
             });
-          }));
-      saveAction.add(IconButton(
-          icon: Icon(Icons.delete),
-          color: color,
-          splashColor: splashColor,
-          iconSize: 60,
-          onPressed: () {
-            _deleteRecord();
-            this.timerState.currentState.reset();
-          }));
+          },
+        ),
+      );
     } else if (!this._isRecording && _recordPath != null && this._isPlaying) {
       recordingAction.replaceRange(recordingLength - 2, recordingLength - 1, [
-        IconButton(
-          icon: Icon(Icons.stop),
-          color: color,
-          splashColor: splashColor,
-          iconSize: 60,
-          onPressed: () {
-            if (this._isPlaying) _stopPlaying();
+        PrimaryCircularBtn3d(
+          Icon(
+            Icons.stop,
+            color: color,
+            size: 80,
+          ),
+          200,
+          Theme.of(context).scaffoldBackgroundColor,
+          () {
+            setState(() {
+              _stopPlaying();
+            });
           },
-        )
+        ),
       ]);
     }
 
@@ -142,14 +201,14 @@ class _RecorderPageState extends State<RecorderPage> {
     return ListView(
       children: [
         Container(
-          padding: EdgeInsets.only(top: 120.0),
+          padding: EdgeInsets.only(top: 60.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: recordingAction,
           ),
         ),
         Container(
-          padding: EdgeInsets.only(bottom: 120.0),
+          padding: EdgeInsets.only(bottom: 30.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: saveAction,
@@ -236,10 +295,13 @@ class _RecorderPageState extends State<RecorderPage> {
   }
 
   _deleteRecord() {
-    File(_recordPath).delete();
-    setState(() {
-      saveAction.clear();
-      _recordPath = null;
+    _stopPlaying();
+    _dialog.callInfoDialog(context, 'Are you sure ?', '', () {
+      File(_recordPath).delete();
+      setState(() {
+        saveAction.clear();
+        _recordPath = null;
+      });
     });
   }
 }

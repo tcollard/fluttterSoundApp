@@ -44,6 +44,7 @@ class _SettingsPageState extends State<SettingsPage> {
       shrinkWrap: true,
       allowShades: false,
       colors: fullMaterialColors,
+      circleSize: 35,
       selectedColor: Theme.of(context).primaryColor,
       onMainColorChange: (_color) => setState(() {
         _changeColorSettings(_color);
@@ -55,7 +56,7 @@ class _SettingsPageState extends State<SettingsPage> {
           primaryColor: _color,
           brightness: brightness,
           scaffoldBackgroundColor:
-              (darkModeState) ?  Colors.grey[850] : Colors.grey.shade200,
+              (darkModeState) ? Colors.grey[850] : Colors.grey.shade200,
         ));
         Cache().setCache('themeColor', _color.value);
         Cache().setCache('darkModeState', darkModeState);
@@ -92,14 +93,20 @@ class _SettingsPageState extends State<SettingsPage> {
           ],
         ),
         chooseColor(),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'Dark mode',
-              style: TextStyle(fontSize: 20.0),
-            ),
-          ],
+        Divider(
+          color: Colors.grey[500],
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top:12.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                'Dark mode',
+                style: TextStyle(fontSize: 20.0),
+              ),
+            ],
+          ),
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
