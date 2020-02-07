@@ -88,18 +88,38 @@ class _TimerTextState extends State<TimerText> {
 
   @override
   Widget build(BuildContext context) {
+    TextStyle timerStyle = TextStyle(
+      fontSize: 60.0,
+      color: (Theme.of(context).brightness == Brightness.dark)
+          ? Colors.white
+          : Colors.grey,
+    );
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         RepaintBoundary(
           child: SizedBox(
-            child: MinutesAndSeconds(config: config),
+            width: 70,
+            child: Minutes(config: config),
           ),
+        ),
+        Text(
+          ':',
+          style: timerStyle,
         ),
         RepaintBoundary(
           child: SizedBox(
+            width: 70,
+            child: Seconds(config: config),
+          ),
+        ),
+        Text('.', style: timerStyle),
+        RepaintBoundary(
+          child: SizedBox(
             child: Hundreds(config: config),
+            width: 70,
           ),
         )
       ],
@@ -107,20 +127,58 @@ class _TimerTextState extends State<TimerText> {
   }
 }
 
-class MinutesAndSeconds extends StatefulWidget {
-  MinutesAndSeconds({this.config});
+class Minutes extends StatefulWidget {
+  Minutes({this.config});
   final ConfigTimer config;
 
   @override
-  _MinutesAndSecondsState createState() =>
-      _MinutesAndSecondsState(config: config);
+  _MinutesState createState() => _MinutesState(config: config);
 }
 
-class _MinutesAndSecondsState extends State<MinutesAndSeconds> {
-  _MinutesAndSecondsState({this.config});
+class _MinutesState extends State<Minutes> {
+  _MinutesState({this.config});
   final ConfigTimer config;
 
   int minutes = 0;
+
+  @override
+  void initState() {
+    config.timeListeners.add(_actualizeTime);
+    super.initState();
+  }
+
+  void _actualizeTime(ElapsedTime elapsedTime) {
+    if (elapsedTime.minutes != minutes) {
+      setState(() {
+        minutes = elapsedTime.minutes;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    String minutesStr = (minutes % 60).toString().padLeft(2, '0');
+    TextStyle timerStyle = TextStyle(
+      fontSize: 60.0,
+      color: (Theme.of(context).brightness == Brightness.dark)
+          ? Colors.white
+          : Colors.grey,
+    );
+    return Text('$minutesStr', style: timerStyle);
+  }
+}
+
+class Seconds extends StatefulWidget {
+  Seconds({this.config});
+  final ConfigTimer config;
+
+  @override
+  _SecondsState createState() => _SecondsState(config: config);
+}
+
+class _SecondsState extends State<Seconds> {
+  _SecondsState({this.config});
+  final ConfigTimer config;
   int seconds = 0;
 
   @override
@@ -130,9 +188,8 @@ class _MinutesAndSecondsState extends State<MinutesAndSeconds> {
   }
 
   void _actualizeTime(ElapsedTime elapsedTime) {
-    if (elapsedTime.minutes != minutes || elapsedTime.seconds != seconds) {
+    if (elapsedTime.seconds != seconds) {
       setState(() {
-        minutes = elapsedTime.minutes;
         seconds = elapsedTime.seconds;
       });
     }
@@ -140,10 +197,14 @@ class _MinutesAndSecondsState extends State<MinutesAndSeconds> {
 
   @override
   Widget build(BuildContext context) {
-    String minutesStr = (minutes % 60).toString().padLeft(2, '0');
     String secondsStr = (seconds % 60).toString().padLeft(2, '0');
-    TextStyle timerStyle = TextStyle(fontSize: 60.0, color: (Theme.of(context).brightness == Brightness.dark) ? Colors.white : Colors.grey );
-    return Text('$minutesStr:$secondsStr.', style: timerStyle);
+    TextStyle timerStyle = TextStyle(
+      fontSize: 60.0,
+      color: (Theme.of(context).brightness == Brightness.dark)
+          ? Colors.white
+          : Colors.grey,
+    );
+    return Text('$secondsStr', style: timerStyle);
   }
 }
 
@@ -158,7 +219,6 @@ class Hundreds extends StatefulWidget {
 class _HundredsState extends State<Hundreds> {
   _HundredsState({this.config});
   final ConfigTimer config;
-
   int hundreds = 0;
 
   @override
@@ -178,7 +238,11 @@ class _HundredsState extends State<Hundreds> {
   @override
   Widget build(BuildContext context) {
     String hundredsStr = (hundreds % 100).toString().padLeft(2, '0');
-    TextStyle timerStyle = TextStyle(fontSize: 60.0, color: (Theme.of(context).brightness == Brightness.dark) ? Colors.white : Colors.grey );
+    TextStyle timerStyle = TextStyle(
+        fontSize: 60.0,
+        color: (Theme.of(context).brightness == Brightness.dark)
+            ? Colors.white
+            : Colors.grey);
     return Text(hundredsStr, style: timerStyle);
   }
 }
