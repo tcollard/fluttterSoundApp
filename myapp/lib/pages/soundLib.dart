@@ -91,6 +91,7 @@ class _SoundLibState extends State<SoundLib> {
                       _dialog.callMonoInputDialog(
                           context, 'Change name', index['name'], (data) {
                         setState(() {
+                          _triggerSnackBar('Modified', Icons.check);
                           Cache().updateRecord('name', data, index);
                           index['name'] = data;
                         });
@@ -105,6 +106,7 @@ class _SoundLibState extends State<SoundLib> {
                     onPressed: () {
                       _dialog.callInfoDialog(context, 'Delete Sound',
                           'Do you want to remove `${index["name"]}`', () {
+                        _triggerSnackBar('Removed', Icons.clear);
                         setState(() {
                           deleteSound(index);
                         });
@@ -170,5 +172,29 @@ class _SoundLibState extends State<SoundLib> {
     int i = listSound.indexWhere((elem) => elem == index);
     listSound.removeAt(i);
     Cache().removeRecord(index);
+  }
+
+  _triggerSnackBar(String text, IconData icon) {
+    return Scaffold.of(context).showSnackBar(
+      SnackBar(
+        duration: Duration(seconds: 2),
+        content: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(right: 10),
+              child: Icon(icon),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Text(
+                text,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
