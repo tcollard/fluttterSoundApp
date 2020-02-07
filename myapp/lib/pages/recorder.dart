@@ -79,9 +79,7 @@ class _RecorderPageState extends State<RecorderPage> {
             200,
             Theme.of(context).scaffoldBackgroundColor,
             () {
-              setState(() {
-                _startRecord();
-              });
+              if (!_isRecording) _startRecord();
             },
           ),
         ],
@@ -99,9 +97,7 @@ class _RecorderPageState extends State<RecorderPage> {
             200,
             Theme.of(context).scaffoldBackgroundColor,
             () {
-              setState(() {
-                _stopRecord();
-              });
+              if (_isRecording) _stopRecord();
             },
           ),
         ],
@@ -122,9 +118,7 @@ class _RecorderPageState extends State<RecorderPage> {
             200,
             Theme.of(context).scaffoldBackgroundColor,
             () {
-              setState(() {
-                _playRecord();
-              });
+              _playRecord();
             },
           ),
         ],
@@ -147,17 +141,15 @@ class _RecorderPageState extends State<RecorderPage> {
           90,
           Theme.of(context).scaffoldBackgroundColor,
           () {
-            setState(() {
-              _dialog.callMonoInputDialog(
-                context,
-                'Insert name:',
-                _recordPath,
-                (data) {
-                  _saveRecord(data);
-                  this.timerState.currentState.reset();
-                },
-              );
-            });
+            _dialog.callMonoInputDialog(
+              context,
+              'Insert name:',
+              _recordPath,
+              (data) {
+                _saveRecord(data);
+                this.timerState.currentState.reset();
+              },
+            );
           },
         ),
       );
@@ -171,10 +163,8 @@ class _RecorderPageState extends State<RecorderPage> {
           90,
           Theme.of(context).scaffoldBackgroundColor,
           () {
-            setState(() {
-              _deleteRecord();
-              this.timerState.currentState.reset();
-            });
+            _deleteRecord();
+            this.timerState.currentState.reset();
           },
         ),
       );
@@ -189,9 +179,7 @@ class _RecorderPageState extends State<RecorderPage> {
           200,
           Theme.of(context).scaffoldBackgroundColor,
           () {
-            setState(() {
-              _stopPlaying();
-            });
+            _stopPlaying();
           },
         ),
       ]);
@@ -233,13 +221,13 @@ class _RecorderPageState extends State<RecorderPage> {
       });
     }
     try {
-      if (await AudioRecorder.hasPermissions) {
-        this.timerState.currentState.start();
-        await AudioRecorder.start();
-        await AudioRecorder.isRecording;
+      if (await AudioRecorder.hasPermissions && !this._isRecording) {
         setState(() {
           this._isRecording = true;
         });
+        this.timerState.currentState.start();
+        await AudioRecorder.start();
+        await AudioRecorder.isRecording;
       }
     } catch (e) {
       setState(() {
@@ -249,16 +237,18 @@ class _RecorderPageState extends State<RecorderPage> {
   }
 
   _stopRecord() async {
-    try {
-      this.timerState.currentState.stop();
-      var recording = await AudioRecorder.stop();
-      await AudioRecorder.isRecording;
-      setState(() {
-        this._isRecording = false;
-        _recordPath = recording.path;
-        _duration = recording.duration;
-      });
-    } catch (e) {}
+    if (_isRecording) {
+      try {
+        this.timerState.currentState.stop();
+        await Future.delayed(Duration(milliseconds: 300));
+        var recording = await AudioRecorder.stop();
+        setState(() {
+          this._isRecording = false;
+          _recordPath = recording.path;
+          _duration = recording.duration;
+        });
+      } catch (e) {}
+    }
   }
 
   // PLAYING FUNCTION
