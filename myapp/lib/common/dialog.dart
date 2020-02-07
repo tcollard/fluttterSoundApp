@@ -36,19 +36,19 @@ class AllDialog {
         showDialog(
         context: context,
         builder: (_) => new AlertDialog(
-          title: Text(textTitle),
+          title: Text(textTitle, style: TextStyle(fontSize: 20),),
           content: Text(textContent),
           elevation: 24.0,
           actions: <Widget>[
             FlatButton(
-              child: Text('Yes'),
+              child: Text('Yes', style: TextStyle(fontSize: 20)),
               onPressed: () {
                 onValidation();
                 Navigator.pop(context);
               },
             ),
             FlatButton(
-              child: Text('No'),
+              child: Text('No', style: TextStyle(fontSize: 20)),
               onPressed: () {
                 Navigator.pop(context);
               },

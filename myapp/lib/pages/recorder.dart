@@ -287,6 +287,7 @@ class _RecorderPageState extends State<RecorderPage> {
 
   // SAVE / DELETE RECORDING
   _saveRecord(String name) {
+    _triggerSnackBar('Saved', Icons.check);
     Cache().saveRecord((name.length > 0) ? name : _recordPath, _recordPath);
     setState(() {
       saveAction.clear();
@@ -297,11 +298,36 @@ class _RecorderPageState extends State<RecorderPage> {
   _deleteRecord() {
     _stopPlaying();
     _dialog.callInfoDialog(context, 'Are you sure ?', '', () {
+      _triggerSnackBar('Removed', Icons.clear);
       File(_recordPath).delete();
       setState(() {
         saveAction.clear();
         _recordPath = null;
       });
     });
+  }
+
+  _triggerSnackBar(String text, IconData icon) {
+    return Scaffold.of(context).showSnackBar(
+      SnackBar(
+        duration: Duration(seconds: 2),
+        content: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(right: 10),
+              child: Icon(icon),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Text(
+                text,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
