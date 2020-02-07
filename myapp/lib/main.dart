@@ -19,6 +19,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
+    print('Set State');
     Cache().getCacheOnKey('darkModeState').then((state) {
       if (!mounted) return ;
       setState(() {
@@ -29,6 +30,7 @@ class _MyAppState extends State<MyApp> {
           _cacheBrigthness = Brightness.light;
           darkModeState = false;
         }
+        print('Set Darkmode');
       });
     });
     Cache().getCacheOnKey('themeColor').then((data) {
@@ -42,6 +44,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    print('Widget build');
     return DynamicTheme(
       defaultBrightness: _cacheBrigthness,
       data: (brightness) => ThemeData(
@@ -50,7 +53,7 @@ class _MyAppState extends State<MyApp> {
         accentColor: _cacheColor,
         primaryColor: _cacheColor,
         brightness: _cacheBrigthness,
-        scaffoldBackgroundColor: (!darkModeState) ? Colors.grey.shade200 : Theme.of(context).scaffoldBackgroundColor,
+        scaffoldBackgroundColor: (!darkModeState) ? Colors.grey.shade200 : Colors.grey[850],
       ),
       themedWidgetBuilder: (context, theme) {
         return MaterialApp(
@@ -62,7 +65,7 @@ class _MyAppState extends State<MyApp> {
             child: Scaffold(
               appBar: AppBar(
                 title: Text(
-                  'My App',
+                  'MyMic',
                   style:
                       GoogleFonts.monoton(color: theme.scaffoldBackgroundColor),
                 ),
