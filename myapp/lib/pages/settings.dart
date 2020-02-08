@@ -18,16 +18,6 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   void initState() {
-    PermissionHandler()
-        .checkPermissionStatus(PermissionGroup.storage)
-        .then((permission) {
-      if (permission != PermissionStatus.granted) {
-        _dialog.callInfoDialog(context, 'ACCESS PERMISSION',
-            'Please give me your permissions to record and save 🙏', () async {
-          await PermissionHandler().openAppSettings();
-        });
-      }
-    });
     Cache().getCacheOnKey('darkModeState').then((state) {
       if (!mounted) return;
       setState(() {
@@ -65,6 +55,7 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   _changeColorSettings(_color) {
+    _checkPermission();
     if (_color.value == Colors.white.value ||
         _color.value == Colors.limeAccent.value ||
         _color.value == Colors.yellowAccent.value) {
@@ -74,6 +65,19 @@ class _SettingsPageState extends State<SettingsPage> {
       brightness = Brightness.light;
       darkModeState = false;
     }
+  }
+
+  _checkPermission() {
+    PermissionHandler()
+        .checkPermissionStatus(PermissionGroup.storage)
+        .then((permission) {
+      if (permission != PermissionStatus.granted) {
+        _dialog.callInfoDialog(context, 'ACCESS PERMISSION',
+            'Please give me your permissions to record and save 🙏', () async {
+          await PermissionHandler().openAppSettings();
+        });
+      }
+    });
   }
 
   @override
@@ -97,7 +101,7 @@ class _SettingsPageState extends State<SettingsPage> {
           color: Colors.grey[500],
         ),
         Padding(
-          padding: const EdgeInsets.only(top:12.0),
+          padding: const EdgeInsets.only(top: 12.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -114,6 +118,7 @@ class _SettingsPageState extends State<SettingsPage> {
             Switch(
               value: darkModeState,
               onChanged: (value) {
+                _checkPermission();
                 setState(() {
                   darkModeState = value;
                   Cache().setCache('darkModeState', value);

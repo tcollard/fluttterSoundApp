@@ -36,7 +36,6 @@ class _RecorderPageState extends State<RecorderPage>
 
   @override
   void initState() {
-    print('Init State');
     _fadeController = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 800),

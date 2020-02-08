@@ -10,7 +10,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="myapp"
+        android:label="mymic"
         android:icon="@mipmap/ic_launcher">
         <provider
             android:name="androidx.core.content.FileProvider"
