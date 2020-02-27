@@ -30,8 +30,6 @@ class _RecorderPageState extends State<RecorderPage>
   AnimationController _bouncyController;
   Animation _animation;
 
-  final GlobalKey<TimerContentState> timerState =
-      GlobalKey<TimerContentState>();
   final GlobalKey<ProgressBarState> progressBar = GlobalKey<ProgressBarState>();
 
   @override
@@ -52,11 +50,17 @@ class _RecorderPageState extends State<RecorderPage>
       curve: Curves.bounceOut,
       reverseCurve: Curves.easeOut,
     );
+    AudioRecorder.isRecording.then((stateRecording) {
+      setState(() {
+        _isRecording = stateRecording;
+      });
+    });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    var timerService = TimerService.of(context);
     Color _setColorBoxShadow() {
       return (Theme.of(context).brightness == Brightness.dark)
           ? Colors.white.withOpacity(0.05) // black background
@@ -71,7 +75,17 @@ class _RecorderPageState extends State<RecorderPage>
     recordingAction.addAll(
       [
         Container(
-          child: TimerContent(key: timerState),
+          child: AnimatedBuilder(
+            animation: timerService,
+            builder: (context, child) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  TimerDisplay(duration: timerService.currentDuration),
+                ],
+              );
+            },
+          ),
           padding: EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
@@ -96,7 +110,7 @@ class _RecorderPageState extends State<RecorderPage>
           200,
           Theme.of(context).scaffoldBackgroundColor,
           () {
-            _selectFunction();
+            _selectFunction(timerService);
           },
         ),
         FadeTransition(
@@ -131,7 +145,7 @@ class _RecorderPageState extends State<RecorderPage>
                   'Insert name:',
                   _recordPath,
                   (data) {
-                    _saveRecord(data);
+                    _saveRecord(data, timerService);
                   },
                 );
               },
@@ -152,7 +166,7 @@ class _RecorderPageState extends State<RecorderPage>
               90,
               Theme.of(context).scaffoldBackgroundColor,
               () {
-                _deleteRecord();
+                _deleteRecord(timerService);
               },
             ),
           ),
@@ -209,11 +223,11 @@ class _RecorderPageState extends State<RecorderPage>
     }
   }
 
-  _selectFunction() {
+  _selectFunction(timerService) {
     if (!this._isRecording && _recordPath == null) {
-      if (!_isRecording) _startRecord();
+      if (!_isRecording) _startRecord(timerService);
     } else if (this._isRecording) {
-      if (_isRecording) _stopRecord();
+      if (_isRecording) _stopRecord(timerService);
     } else if (!this._isRecording && _recordPath != null && !this._isPlaying) {
       _playRecord();
     } else if (!this._isRecording && _recordPath != null && this._isPlaying) {
@@ -222,7 +236,7 @@ class _RecorderPageState extends State<RecorderPage>
   }
 
   // RECORDING FUNCTION
-  _startRecord() async {
+  _startRecord(var timerService) async {
     PermissionStatus microPermission = await PermissionHandler()
         .checkPermissionStatus(PermissionGroup.microphone);
     PermissionStatus storePermission = await PermissionHandler()
@@ -240,7 +254,7 @@ class _RecorderPageState extends State<RecorderPage>
         setState(() {
           this._isRecording = true;
         });
-        this.timerState.currentState.start();
+        timerService.start();
         await AudioRecorder.start();
         await AudioRecorder.isRecording;
       }
@@ -251,10 +265,10 @@ class _RecorderPageState extends State<RecorderPage>
     }
   }
 
-  _stopRecord() async {
+  _stopRecord(var timerService) async {
     if (_isRecording) {
       try {
-        this.timerState.currentState.stop();
+        timerService.stop();
         await Future.delayed(Duration(milliseconds: 300));
         var recording = await AudioRecorder.stop();
         setState(() {
@@ -291,10 +305,10 @@ class _RecorderPageState extends State<RecorderPage>
   }
 
   // SAVE / DELETE RECORDING
-  _saveRecord(String name) {
+  _saveRecord(String name, var timerService) {
     _triggerSnackBar('Saved', Icons.check);
     Cache().saveRecord((name.length > 0) ? name : _recordPath, _recordPath);
-    this.timerState.currentState.reset();
+    timerService.reset();
     setState(() {
       _fadeController.reverse();
       _bouncyController.reverse();
@@ -302,12 +316,12 @@ class _RecorderPageState extends State<RecorderPage>
     });
   }
 
-  _deleteRecord() {
+  _deleteRecord(var timerService) {
     _stopPlaying();
     _dialog.callInfoDialog(context, 'Are you sure ?', '', () {
       _triggerSnackBar('Removed', Icons.clear);
       File(_recordPath).delete();
-      this.timerState.currentState.reset();
+      timerService.reset();
       setState(() {
         _fadeController.reverse();
         _bouncyController.reverse();

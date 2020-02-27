@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
+import 'package:myapp/common/timer.dart';
 import 'package:myapp/utils/pages.dart';
 import 'package:myapp/utils/cache.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  final timerService = TimerService();
+  runApp(
+    TimerServiceProvider(
+      service: timerService,
+      child: MyApp(),
+    ),
+  );
+}
 
 class MyApp extends StatefulWidget {
   @override
