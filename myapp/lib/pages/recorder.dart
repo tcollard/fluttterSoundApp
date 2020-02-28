@@ -237,13 +237,18 @@ class _RecorderPageState extends State<RecorderPage>
 
   // RECORDING FUNCTION
   _startRecord(var timerService) async {
-    PermissionStatus microPermission = await PermissionHandler()
+    PermissionStatus microPermission;
+    if (Platform.isIOS) {
+      await PermissionHandler()
+          .requestPermissions([PermissionGroup.microphone]);
+    }
+    if (Platform.isAndroid) {
+      await PermissionHandler().requestPermissions(
+          [PermissionGroup.microphone, PermissionGroup.storage]);
+    }
+    microPermission = await PermissionHandler()
         .checkPermissionStatus(PermissionGroup.microphone);
-    PermissionStatus storePermission = await PermissionHandler()
-        .checkPermissionStatus(PermissionGroup.storage);
-
-    if (microPermission != PermissionStatus.granted ||
-        storePermission != PermissionStatus.granted) {
+    if (Platform.isIOS && microPermission != PermissionStatus.granted) {
       _dialog.callInfoDialog(context, 'ACCESS PERMISSION',
           'Please give me your permissions to record and save 🙏', () async {
         await PermissionHandler().openAppSettings();

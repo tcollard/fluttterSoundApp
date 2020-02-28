@@ -72,10 +72,7 @@ class _SettingsPageState extends State<SettingsPage> {
         .checkPermissionStatus(PermissionGroup.storage)
         .then((permission) {
       if (permission != PermissionStatus.granted) {
-        _dialog.callInfoDialog(context, 'ACCESS PERMISSION',
-            'Please give me your permissions to record and save 🙏', () async {
-          await PermissionHandler().openAppSettings();
-        });
+        PermissionHandler().requestPermissions([PermissionGroup.storage]);
       }
     });
   }
