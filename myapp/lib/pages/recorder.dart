@@ -333,6 +333,7 @@ class _RecorderPageState extends State<RecorderPage>
   _triggerSnackBar(String text, IconData icon) {
     return Scaffold.of(context).showSnackBar(
       SnackBar(
+        backgroundColor: Theme.of(context).primaryColor,
         duration: Duration(seconds: 2),
         content: Row(
           mainAxisAlignment: MainAxisAlignment.center,
