@@ -17,14 +17,15 @@ environment:
   sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
+  audio_recorder: ^1.0.1
+  audioplayers: ^0.14.0
+  dynamic_theme: ^1.0.1
+  flutter_launcher_icons: ^0.7.5
+  flutter_material_color_picker: ^1.0.5
   flutter_spinkit: "^2.1.0"
   flutter_share: ^1.0.2+1
   google_fonts: ^0.3.5
-  dynamic_theme: ^1.0.1
   path_provider: ^1.5.1
-  flutter_material_color_picker: ^1.0.5
-  audio_recorder: ^1.0.1
-  audioplayers: ^0.14.0
   permission_handler: ^4.2.0+hotfix.2
   flutter:
     sdk: flutter
@@ -37,6 +38,10 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "lib/asset/icons/mymic_app_logo.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
