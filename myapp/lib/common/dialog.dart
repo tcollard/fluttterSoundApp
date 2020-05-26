@@ -35,7 +35,7 @@ class AllDialog {
     callInfoDialog(BuildContext context, String textTitle, String textContent, Function onValidation) {
         showDialog(
         context: context,
-        builder: (_) => new AlertDialog(
+        builder: (context) => AlertDialog(
           title: Text(textTitle, style: TextStyle(fontSize: 20),),
           content: Text(textContent),
           elevation: 24.0,
