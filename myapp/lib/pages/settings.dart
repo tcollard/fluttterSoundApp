@@ -2,7 +2,6 @@ import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:myapp/common/dialog.dart';
 import 'package:myapp/utils/cache.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -14,7 +13,18 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   bool darkModeState = false;
   Brightness brightness;
-  AllDialog _dialog = AllDialog();
+  List<Color> _darkModeColorList = [
+    Colors.white,
+    Colors.limeAccent,
+    Colors.yellowAccent,
+    Colors.cyanAccent,
+    Colors.tealAccent,
+    Colors.greenAccent,
+    Colors.lightGreenAccent,
+    Colors.lime,
+    Colors.yellow,
+    Colors.amberAccent,
+  ];
 
   @override
   void initState() {
@@ -56,15 +66,15 @@ class _SettingsPageState extends State<SettingsPage> {
 
   _changeColorSettings(_color) {
     _checkPermission();
-    if (_color.value == Colors.white.value ||
-        _color.value == Colors.limeAccent.value ||
-        _color.value == Colors.yellowAccent.value) {
-      brightness = Brightness.dark;
-      darkModeState = true;
-    } else {
-      brightness = Brightness.light;
-      darkModeState = false;
-    }
+    darkModeState = false;
+    brightness = Brightness.light;
+
+    _darkModeColorList.forEach((element) { 
+      if (_color.value == element.value) {
+        brightness = Brightness.dark;
+        darkModeState = true;
+      }
+    });
   }
 
   _checkPermission() {
