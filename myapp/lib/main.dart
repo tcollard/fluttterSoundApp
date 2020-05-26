@@ -4,15 +4,40 @@ import 'package:myapp/common/timer.dart';
 import 'package:myapp/utils/pages.dart';
 import 'package:myapp/utils/cache.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flare_splash_screen/flare_splash_screen.dart';
+import 'package:flutter/services.dart';
 
 void main() {
   final timerService = TimerService();
-  runApp(
-    TimerServiceProvider(
-      service: timerService,
-      child: MyApp(),
-    ),
-  );
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitDown, DeviceOrientation.portraitUp]).then((_) {
+    runApp(
+      TimerServiceProvider(
+        service: timerService,
+        child: MySplashScreen(),
+      ),
+    );
+  });
+}
+
+class MySplashScreen extends StatelessWidget {
+  const MySplashScreen({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Recording App',
+      home: SplashScreen.navigate(
+        name: 'lib/asset/animation/MyMic.flr',
+        next: (_) => MyApp(),
+        until: () => Future.delayed(Duration(seconds: 0)),
+        startAnimation: 'StartAnimation',
+        backgroundColor: Colors.white,
+      ),
+    );
+  }
 }
 
 class MyApp extends StatefulWidget {
@@ -29,7 +54,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     Cache().getCacheOnKey('darkModeState').then((state) {
-      if (!mounted) return ;
+      if (!mounted) return;
       setState(() {
         if (state != null && state != false) {
           _cacheBrigthness = Brightness.dark;
@@ -41,7 +66,7 @@ class _MyAppState extends State<MyApp> {
       });
     });
     Cache().getCacheOnKey('themeColor').then((data) {
-      if (!mounted) return ;
+      if (!mounted) return;
       setState(() {
         _cacheColor = (data != null) ? Color(data) : Colors.blue;
       });
@@ -59,7 +84,8 @@ class _MyAppState extends State<MyApp> {
         accentColor: _cacheColor,
         primaryColor: _cacheColor,
         brightness: _cacheBrigthness,
-        scaffoldBackgroundColor: (!darkModeState) ? Colors.grey.shade200 : Colors.grey[850],
+        scaffoldBackgroundColor:
+            (!darkModeState) ? Colors.grey.shade200 : Colors.grey[850],
       ),
       themedWidgetBuilder: (context, theme) {
         return MaterialApp(
