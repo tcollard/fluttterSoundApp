@@ -6,6 +6,7 @@ import 'package:myapp/utils/cache.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flare_splash_screen/flare_splash_screen.dart';
 import 'package:flutter/services.dart';
+import 'package:myapp/utils/logo.dart';
 
 void main() {
   final timerService = TimerService();
@@ -96,11 +97,7 @@ class _MyAppState extends State<MyApp> {
             length: _listPages.length,
             child: Scaffold(
               appBar: AppBar(
-                title: Text(
-                  'MyMic',
-                  style:
-                      GoogleFonts.monoton(color: theme.scaffoldBackgroundColor),
-                ),
+                title: Logo(),
                 centerTitle: true,
                 backgroundColor: theme.primaryColor,
                 elevation: 0,

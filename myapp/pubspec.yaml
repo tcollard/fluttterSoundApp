@@ -57,6 +57,8 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - lib/asset/animation/MyMic.flr
+    - lib/asset/icons/mymic_bm.png
+    - lib/asset/icons/mymic_lm.png
   #   - fonts/RobotoSla-Regular.ttf
   #  - images/a_dot_burr.jpeg
   #  - images/a_dot_ham.jpeg

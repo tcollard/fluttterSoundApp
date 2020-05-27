@@ -4,6 +4,7 @@ import 'package:flutter_material_color_picker/flutter_material_color_picker.dart
 import 'package:google_fonts/google_fonts.dart';
 import 'package:myapp/utils/cache.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:myapp/utils/logo.dart';
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -60,6 +61,7 @@ class _SettingsPageState extends State<SettingsPage> {
         ));
         Cache().setCache('themeColor', _color.value);
         Cache().setCache('darkModeState', darkModeState);
+        LogoPath().changeLogo(darkModeState);
       }),
     );
   }
@@ -69,7 +71,7 @@ class _SettingsPageState extends State<SettingsPage> {
     darkModeState = false;
     brightness = Brightness.light;
 
-    _darkModeColorList.forEach((element) { 
+    _darkModeColorList.forEach((element) {
       if (_color.value == element.value) {
         brightness = Brightness.dark;
         darkModeState = true;
@@ -129,6 +131,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 setState(() {
                   darkModeState = value;
                   Cache().setCache('darkModeState', value);
+                  LogoPath().changeLogo(darkModeState);
                   DynamicTheme.of(context).setThemeData(ThemeData(
                     textTheme: GoogleFonts.robotoSlabTextTheme().apply(
                       bodyColor: (darkModeState) ? Colors.white : Colors.black,
