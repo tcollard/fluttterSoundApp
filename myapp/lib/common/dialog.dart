@@ -15,47 +15,50 @@ class AllDialog {
             ),
             actions: <Widget>[
               FlatButton(
+                child: Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
                 child: Text('Save'),
                 onPressed: () {
                   onValidation(nameController.text);
                   Navigator.of(context).pop();
                 },
               ),
-              FlatButton(
-                child: Text('Cancel'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              )
             ],
           );
         });
   }
 
-    callInfoDialog(BuildContext context, String textTitle, String textContent, Function onValidation) {
-        showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text(textTitle, style: TextStyle(fontSize: 20),),
-          content: Text(textContent),
-          elevation: 24.0,
-          actions: <Widget>[
-            FlatButton(
-              child: Text('Yes', style: TextStyle(fontSize: 20)),
-              onPressed: () {
-                onValidation();
-                Navigator.pop(context);
-              },
-            ),
-            FlatButton(
-              child: Text('No', style: TextStyle(fontSize: 20)),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
+  callInfoDialog(BuildContext context, String textTitle, String textContent,
+      Function onValidation) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          textTitle,
+          style: TextStyle(fontSize: 20),
         ),
-      );
-    }
-
+        content: Text(textContent),
+        elevation: 24.0,
+        actions: <Widget>[
+          FlatButton(
+            child: Text('No', style: TextStyle(fontSize: 20)),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          FlatButton(
+            child: Text('Yes', style: TextStyle(fontSize: 20)),
+            onPressed: () {
+              onValidation();
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+    );
+  }
 }

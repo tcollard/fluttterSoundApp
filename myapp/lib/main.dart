@@ -50,11 +50,12 @@ class _MyAppState extends State<MyApp> {
   Brightness _cacheBrigthness;
   bool darkModeState = false;
   var _cacheColor;
+  Cache _cache = Cache();
   List _listPages = AllPages().list;
 
   @override
   void initState() {
-    Cache().getCacheOnKey('darkModeState').then((state) {
+    _cache.getCacheOnKey('darkModeState').then((state) {
       if (!mounted) return;
       setState(() {
         if (state != null && state != false) {
@@ -66,7 +67,7 @@ class _MyAppState extends State<MyApp> {
         }
       });
     });
-    Cache().getCacheOnKey('themeColor').then((data) {
+    _cache.getCacheOnKey('themeColor').then((data) {
       if (!mounted) return;
       setState(() {
         _cacheColor = (data != null) ? Color(data) : Colors.blue;

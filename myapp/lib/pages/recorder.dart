@@ -241,8 +241,7 @@ class _RecorderPageState extends State<RecorderPage>
     if (Platform.isIOS) {
       await PermissionHandler()
           .requestPermissions([PermissionGroup.microphone]);
-    }
-    if (Platform.isAndroid) {
+    } else {
       await PermissionHandler().requestPermissions(
           [PermissionGroup.microphone, PermissionGroup.storage]);
     }
@@ -311,8 +310,9 @@ class _RecorderPageState extends State<RecorderPage>
 
   // SAVE / DELETE RECORDING
   _saveRecord(String name, var timerService) {
+    Cache _cache = Cache();
     _triggerSnackBar('Saved', Icons.check);
-    Cache().saveRecord((name.length > 0) ? name : _recordPath, _recordPath);
+    _cache.saveRecord((name.length > 0) ? name : _recordPath, _recordPath);
     timerService.reset();
     setState(() {
       _fadeController.reverse();

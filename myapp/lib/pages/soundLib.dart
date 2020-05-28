@@ -17,6 +17,7 @@ class _SoundLibState extends State<SoundLib> {
   String soundPlay;
   Widget body;
   AllDialog _dialog = AllDialog();
+  Cache _cache = Cache();
 
   @override
   void initState() {
@@ -36,7 +37,7 @@ class _SoundLibState extends State<SoundLib> {
   }
 
   initSoundList() async {
-    var recordsJson = await Cache().updateListRecords();
+    var recordsJson = await _cache.updateListRecords();
     if (!mounted) {
       return;
     }
@@ -92,7 +93,7 @@ class _SoundLibState extends State<SoundLib> {
                           context, 'Change name', index['name'], (data) {
                         setState(() {
                           _triggerSnackBar('Modified', Icons.check);
-                          Cache().updateRecord('name', data, index);
+                          _cache.updateRecord('name', data, index);
                           index['name'] = data;
                         });
                       });
@@ -147,7 +148,7 @@ class _SoundLibState extends State<SoundLib> {
       if (newIndex > oldIndex) newIndex -= 1;
       var tmp = listSound.removeAt(oldIndex);
       listSound.insert(newIndex, tmp);
-      Cache().saveRecordOrder(listSound);
+      _cache.saveRecordOrder(listSound);
     });
   }
 
@@ -171,7 +172,7 @@ class _SoundLibState extends State<SoundLib> {
   deleteSound(index) {
     int i = listSound.indexWhere((elem) => elem == index);
     listSound.removeAt(i);
-    Cache().removeRecord(index);
+    _cache.removeRecord(index);
   }
 
   _triggerSnackBar(String text, IconData icon) {

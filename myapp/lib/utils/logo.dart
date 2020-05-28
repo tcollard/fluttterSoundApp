@@ -11,9 +11,9 @@ class LogoPath {
   factory LogoPath() => _logo;
 
   LogoPath._internal() {
-    _logoPath = 'lib/asset/icons/mymic_bm.png';
     _logoBm = 'lib/asset/icons/mymic_bm.png';
     _logoLm = 'lib/asset/icons/mymic_lm.png';
+    _logoPath = _logoLm;
   }
 
   String getLogo() => _logoPath;
@@ -30,10 +30,11 @@ class Logo extends StatefulWidget {
 
 class _LogoState extends State<Logo> {
   LogoPath _logo = LogoPath();
+  Cache _cache = Cache();
 
   @override
   void initState() {
-    Cache().getCacheOnKey('darkModeState').then((state) {
+    _cache.getCacheOnKey('darkModeState').then((state) {
       setState(() {
         _logo.changeLogo(state);
       });

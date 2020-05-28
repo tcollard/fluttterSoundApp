@@ -14,6 +14,7 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   bool darkModeState = false;
   Brightness brightness;
+  Cache _cache = Cache();
   List<Color> _darkModeColorList = [
     Colors.white,
     Colors.limeAccent,
@@ -29,7 +30,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   void initState() {
-    Cache().getCacheOnKey('darkModeState').then((state) {
+    _cache.getCacheOnKey('darkModeState').then((state) {
       if (!mounted) return;
       setState(() {
         darkModeState = (state == null || state == false) ? false : true;
@@ -59,8 +60,8 @@ class _SettingsPageState extends State<SettingsPage> {
           scaffoldBackgroundColor:
               (darkModeState) ? Colors.grey[850] : Colors.grey.shade200,
         ));
-        Cache().setCache('themeColor', _color.value);
-        Cache().setCache('darkModeState', darkModeState);
+        _cache.setCache('themeColor', _color.value);
+        _cache.setCache('darkModeState', darkModeState);
         LogoPath().changeLogo(darkModeState);
       }),
     );
@@ -130,7 +131,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 _checkPermission();
                 setState(() {
                   darkModeState = value;
-                  Cache().setCache('darkModeState', value);
+                  _cache.setCache('darkModeState', value);
                   LogoPath().changeLogo(darkModeState);
                   DynamicTheme.of(context).setThemeData(ThemeData(
                     textTheme: GoogleFonts.robotoSlabTextTheme().apply(
