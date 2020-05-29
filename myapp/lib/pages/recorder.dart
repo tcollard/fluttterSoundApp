@@ -7,6 +7,7 @@ import 'package:myapp/common/timer.dart';
 import 'package:myapp/utils/cache.dart';
 import 'package:audio_recorder/audio_recorder.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:myapp/utils/recordInfo.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
@@ -18,10 +19,7 @@ class RecorderPage extends StatefulWidget {
 class _RecorderPageState extends State<RecorderPage>
     with TickerProviderStateMixin {
   final AudioPlayer audioPlayer = AudioPlayer();
-  Duration _duration;
-  bool _isRecording = false;
-  bool _isPlaying = false;
-  String _recordPath;
+  RecordInfo _info = RecordInfo();
   Color color;
   List<Widget> recordingAction = [];
   List<Widget> saveAction = [];
@@ -34,6 +32,7 @@ class _RecorderPageState extends State<RecorderPage>
 
   @override
   void initState() {
+    print('Init state');
     _fadeController = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 800),
@@ -52,7 +51,7 @@ class _RecorderPageState extends State<RecorderPage>
     );
     AudioRecorder.isRecording.then((stateRecording) {
       setState(() {
-        _isRecording = stateRecording;
+        _info.setIsRecording(stateRecording);
       });
     });
     super.initState();
@@ -143,7 +142,7 @@ class _RecorderPageState extends State<RecorderPage>
                 _dialog.callMonoInputDialog(
                   context,
                   'Insert name:',
-                  _recordPath,
+                  _info.recordPath(),
                   (data) {
                     _saveRecord(data, timerService);
                   },
@@ -195,18 +194,20 @@ class _RecorderPageState extends State<RecorderPage>
   }
 
   _selectIcon() {
-    if (!this._isRecording && _recordPath == null) {
+    if (!_info.isRecording() && _info.recordPath() == null) {
       return Icon(
         Icons.fiber_manual_record,
         color: Colors.redAccent,
         size: 80,
       );
-    } else if (this._isRecording) {
+    } else if (_info.isRecording()) {
       return SpinKitDoubleBounce(
         color: Colors.redAccent,
         size: 175,
       );
-    } else if (!this._isRecording && _recordPath != null && !this._isPlaying) {
+    } else if (!_info.isRecording() &&
+        _info.recordPath() != null &&
+        !_info.isPlaying()) {
       _fadeController.forward();
       _bouncyController.forward();
       return Icon(
@@ -214,7 +215,9 @@ class _RecorderPageState extends State<RecorderPage>
         color: color,
         size: 80,
       );
-    } else if (!this._isRecording && _recordPath != null && this._isPlaying) {
+    } else if (!_info.isRecording() &&
+        _info.recordPath() != null &&
+        _info.isPlaying()) {
       return Icon(
         Icons.stop,
         color: color,
@@ -224,13 +227,17 @@ class _RecorderPageState extends State<RecorderPage>
   }
 
   _selectFunction(timerService) {
-    if (!this._isRecording && _recordPath == null) {
-      if (!_isRecording) _startRecord(timerService);
-    } else if (this._isRecording) {
-      if (_isRecording) _stopRecord(timerService);
-    } else if (!this._isRecording && _recordPath != null && !this._isPlaying) {
+    if (!_info.isRecording() && _info.recordPath() == null) {
+      if (!_info.isRecording()) _startRecord(timerService);
+    } else if (_info.isRecording()) {
+      if (_info.isRecording()) _stopRecord(timerService);
+    } else if (!_info.isRecording() &&
+        _info.recordPath() != null &&
+        !_info.isPlaying()) {
       _playRecord();
-    } else if (!this._isRecording && _recordPath != null && this._isPlaying) {
+    } else if (!_info.isRecording() &&
+        _info.recordPath() != null &&
+        _info.isPlaying()) {
       _stopPlaying();
     }
   }
@@ -254,9 +261,9 @@ class _RecorderPageState extends State<RecorderPage>
       });
     }
     try {
-      if (await AudioRecorder.hasPermissions && !this._isRecording) {
+      if (await AudioRecorder.hasPermissions && !_info.isRecording()) {
         setState(() {
-          this._isRecording = true;
+          _info.setIsRecording(true);
         });
         timerService.start();
         await AudioRecorder.start();
@@ -264,21 +271,21 @@ class _RecorderPageState extends State<RecorderPage>
       }
     } catch (e) {
       setState(() {
-        this._isRecording = false;
+        _info.setIsRecording(false);
       });
     }
   }
 
   _stopRecord(var timerService) async {
-    if (_isRecording) {
+    if (_info.isRecording()) {
       try {
         timerService.stop();
         await Future.delayed(Duration(milliseconds: 300));
         var recording = await AudioRecorder.stop();
         setState(() {
-          this._isRecording = false;
-          _recordPath = recording.path;
-          _duration = recording.duration;
+          _info.setIsRecording(false);
+          _info.setRecordPath(recording.path);
+          _info.setDuration(recording.duration);
         });
       } catch (e) {}
     }
@@ -287,23 +294,29 @@ class _RecorderPageState extends State<RecorderPage>
   // PLAYING FUNCTION
   _playRecord() async {
     audioPlayer.onPlayerCompletion.listen((stop) {
-      this.progressBar.currentState.updatePosition(_duration, _duration);
+      this
+          .progressBar
+          .currentState
+          .updatePosition(_info.getDuration(), _info.getDuration());
       setState(() {
-        this._isPlaying = false;
+        _info.setIsPlaying(false);
       });
     });
     audioPlayer.onAudioPositionChanged.listen((position) {
-      this.progressBar.currentState.updatePosition(position, _duration);
+      this
+          .progressBar
+          .currentState
+          .updatePosition(position, _info.getDuration());
     });
     setState(() {
-      this._isPlaying = true;
+      _info.setIsPlaying(true);
     });
-    await audioPlayer.play(_recordPath, isLocal: true);
+    await audioPlayer.play(_info.recordPath(), isLocal: true);
   }
 
   _stopPlaying() async {
     setState(() {
-      this._isPlaying = false;
+      _info.setIsPlaying(false);
     });
     await audioPlayer.stop();
   }
@@ -312,12 +325,13 @@ class _RecorderPageState extends State<RecorderPage>
   _saveRecord(String name, var timerService) {
     Cache _cache = Cache();
     _triggerSnackBar('Saved', Icons.check);
-    _cache.saveRecord((name.length > 0) ? name : _recordPath, _recordPath);
+    _cache.saveRecord(
+        (name.length > 0) ? name : _info.recordPath(), _info.recordPath());
     timerService.reset();
     setState(() {
       _fadeController.reverse();
       _bouncyController.reverse();
-      _recordPath = null;
+      _info.setRecordPath(null);
     });
   }
 
@@ -325,12 +339,12 @@ class _RecorderPageState extends State<RecorderPage>
     _stopPlaying();
     _dialog.callInfoDialog(context, 'Are you sure ?', '', () {
       _triggerSnackBar('Removed', Icons.clear);
-      File(_recordPath).delete();
+      File(_info.recordPath()).delete();
       timerService.reset();
       setState(() {
         _fadeController.reverse();
         _bouncyController.reverse();
-        _recordPath = null;
+        _info.setRecordPath(null);
       });
     });
   }
