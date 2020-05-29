@@ -18,7 +18,9 @@ class ProgressBarState extends State<ProgressBar> {
 
   @override
   Widget build(BuildContext context) {
+    var height = MediaQuery.of(context).size.height;
     return Container(
+      height: height / 10 - 60,
       padding: EdgeInsets.only(left: 20, right: 20),
       child: Slider(
         min: 0,

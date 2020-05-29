@@ -32,7 +32,6 @@ class _RecorderPageState extends State<RecorderPage>
 
   @override
   void initState() {
-    print('Init state');
     _fadeController = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 800),
@@ -59,6 +58,7 @@ class _RecorderPageState extends State<RecorderPage>
 
   @override
   Widget build(BuildContext context) {
+    var height = MediaQuery.of(context).size.height;
     var timerService = TimerService.of(context);
     Color _setColorBoxShadow() {
       return (Theme.of(context).brightness == Brightness.dark)
@@ -106,7 +106,7 @@ class _RecorderPageState extends State<RecorderPage>
         ),
         PrimaryCircularBtn3d(
           _selectIcon(),
-          200,
+          (height - 60) / 4,
           Theme.of(context).scaffoldBackgroundColor,
           () {
             _selectFunction(timerService);
@@ -115,7 +115,7 @@ class _RecorderPageState extends State<RecorderPage>
         FadeTransition(
           opacity: _fadeController,
           child: Container(
-            padding: const EdgeInsets.only(top: 50),
+            padding: const EdgeInsets.only(top: 30, bottom: 0.0),
             child: ProgressBar(key: progressBar),
           ),
         ),
@@ -134,9 +134,9 @@ class _RecorderPageState extends State<RecorderPage>
               Icon(
                 Icons.save,
                 color: color,
-                size: 50,
+                size: (height - 60) / 10 - 30,
               ),
-              90,
+              (height - 60) / 10,
               Theme.of(context).scaffoldBackgroundColor,
               () {
                 _dialog.callMonoInputDialog(
@@ -160,9 +160,9 @@ class _RecorderPageState extends State<RecorderPage>
               Icon(
                 Icons.delete,
                 color: color,
-                size: 50,
+                size: (height - 60) / 10 - 30,
               ),
-              90,
+              (height - 60) / 10,
               Theme.of(context).scaffoldBackgroundColor,
               () {
                 _deleteRecord(timerService);
@@ -176,7 +176,7 @@ class _RecorderPageState extends State<RecorderPage>
     return ListView(
       children: [
         Container(
-          padding: EdgeInsets.only(top: 60.0),
+          padding: EdgeInsets.only(top: 40.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: recordingAction,

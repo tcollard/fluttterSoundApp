@@ -46,7 +46,7 @@ class _SettingsPageState extends State<SettingsPage> {
       shrinkWrap: true,
       allowShades: false,
       colors: fullMaterialColors,
-      circleSize: 35,
+      circleSize: 25,
       selectedColor: Theme.of(context).primaryColor,
       onMainColorChange: (_color) => setState(() {
         _changeColorSettings(_color);
