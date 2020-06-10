@@ -6,7 +6,10 @@ Application to record sound and play it.
 - Name it
 - Share it
 
-You can change theme color on settings and the must ...
-Darkmode is available
-
 Enjoy it!
+
+## To do:
+- [x] Build .apk (work on andoird 9)
+- [ ] Build .ipa for iOS
+- [ ] Fix save data error on android 8
+- [ ] Fix audio recording on android 10
